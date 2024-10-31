@@ -5,21 +5,39 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/buttonViewStudents"
+    <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manage Students" />
+        android:text="GESTIONNAIRE DES POINTS"
+        android:textSize="24sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp" />
 
     <Button
-        android:id="@+id/buttonViewCourses"
+        android:id="@+id/btnViewBlocs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manage Courses" />
+        android:text="Blocs"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp" />
 
     <Button
-        android:id="@+id/buttonViewEvaluations"
+        android:id="@+id/btnViewCourses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manage Evaluations" />
+        android:text="Cours"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btnViewStudents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Étudiants"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp"
+        android:layout_marginTop="16dp" />
+
 </LinearLayout>

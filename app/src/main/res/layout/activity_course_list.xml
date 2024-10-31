@@ -6,20 +6,16 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/tvBlocTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Course List"
-        android:textSize="18sp"
-        android:paddingBottom="8dp" />
+        android:text="Liste des Cours pour le Bloc"
+        android:textSize="20sp"
+        android:paddingBottom="16dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCourses"
+    <ListView
+        android:id="@+id/listViewCourses"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/buttonAddCourse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Course" />
 </LinearLayout>

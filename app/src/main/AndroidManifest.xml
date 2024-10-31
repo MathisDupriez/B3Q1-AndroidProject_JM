@@ -12,15 +12,34 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.B3Q1AndroidProjectJM"
         tools:targetApi="31">
+
+        <!-- Déclaration de l'activité MainActivity (déjà existante) -->
         <activity
             android:name=".controllers.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <!-- Ajouter BlocListActivity -->
+        <activity
+            android:name=".controllers.BlocListActivity"
+            android:exported="true">
+        </activity>
+
+        <!-- Ajouter CourseListActivity -->
+        <activity
+            android:name=".controllers.CourseListActivity"
+            android:exported="true">
+        </activity>
+
+        <!-- Ajouter StudentListActivity -->
+        <activity
+            android:name=".controllers.StudentListActivity"
+            android:exported="true">
+        </activity>
+
+    </application>
 </manifest>

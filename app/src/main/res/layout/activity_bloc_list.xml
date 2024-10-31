@@ -6,15 +6,15 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvCourseTitle"
+        android:id="@+id/tvBlocListTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Liste des Étudiants pour le Cours"
+        android:text="Liste des Blocs"
         android:textSize="20sp"
         android:paddingBottom="16dp" />
 
-    <ListView
-        android:id="@+id/listViewStudents"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewBlocs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
