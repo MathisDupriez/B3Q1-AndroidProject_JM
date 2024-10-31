@@ -3,77 +3,70 @@ package be.com.learn.adminsys.b3q1_androidproject_jm.models;
 import java.util.List;
 
 public class Bloc {
-    // Attributs
-    private String mName;          // Nom du bloc
-    private List<String> mListStudent; // Liste des étudiants dans ce bloc
-    private List<String> mListBloc;    // Liste des sous-blocs (si applicable)
-    private int mIdParent;             // ID du bloc parent
-    private int mId;                   // ID unique de ce bloc
+    private String blocId;
+    private String name;
+    private List<Student> students;  // Liste des étudiants (référence directe)
+    private List<Bloc> subBlocs;     // Liste des sous-blocs
+    private Bloc parentBloc;         // Référence au bloc parent
 
-    // Constructeur par défaut
-    public Bloc() {
-        // Utilisé pour l'initialisation sans paramètres
-    }
-
-    // Constructeur pour initialiser les valeurs
-    public Bloc(int id, String name, List<String> listStudent, List<String> listBloc, int idParent) {
-        this.mId = id;
-        this.mName = name;
-        this.mListStudent = listStudent;
-        this.mListBloc = listBloc;
-        this.mIdParent = idParent;
+    // Constructor
+    public Bloc(String blocId, String name, List<Student> students, List<Bloc> subBlocs, Bloc parentBloc) {
+        this.blocId = blocId;
+        this.name = name;
+        this.students = students;
+        this.subBlocs = subBlocs;
+        this.parentBloc = parentBloc;
     }
 
     // Getters et Setters
+    public String getBlocId() {
+        return blocId;
+    }
+
+    public void setBlocId(String blocId) {
+        this.blocId = blocId;
+    }
+
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String name) {
-        this.mName = name;
+        this.name = name;
     }
 
-    public List<String> getListStudent() {
-        return mListStudent;
+    public List<Student> getStudents() {
+        return students;
     }
 
-    public void setListStudent(List<String> listStudent) {
-        this.mListStudent = listStudent;
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 
-    public List<String> getListBloc() {
-        return mListBloc;
+    public List<Bloc> getSubBlocs() {
+        return subBlocs;
     }
 
-    public void setListBloc(List<String> listBloc) {
-        this.mListBloc = listBloc;
+    public void setSubBlocs(List<Bloc> subBlocs) {
+        this.subBlocs = subBlocs;
     }
 
-    public int getIdParent() {
-        return mIdParent;
+    public Bloc getParentBloc() {
+        return parentBloc;
     }
 
-    public void setIdParent(int idParent) {
-        this.mIdParent = idParent;
+    public void setParentBloc(Bloc parentBloc) {
+        this.parentBloc = parentBloc;
     }
 
-    public int getId() {
-        return mId;
-    }
-
-    public void setId(int id) {
-        this.mId = id;
-    }
-
-    // Méthode toString pour afficher le contenu du bloc
     @Override
     public String toString() {
         return "Bloc{" +
-                "id=" + mId +
-                ", name='" + mName + '\'' +
-                ", listStudent=" + mListStudent +
-                ", listBloc=" + mListBloc +
-                ", idParent=" + mIdParent +
+                "blocId='" + blocId + '\'' +
+                ", name='" + name + '\'' +
+                ", students=" + students +
+                ", subBlocs=" + subBlocs +
+                ", parentBloc=" + (parentBloc != null ? parentBloc.getName() : "null") +
                 '}';
     }
 }
