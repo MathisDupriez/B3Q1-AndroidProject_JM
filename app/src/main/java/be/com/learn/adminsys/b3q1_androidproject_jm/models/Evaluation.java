@@ -2,35 +2,60 @@ package be.com.learn.adminsys.b3q1_androidproject_jm.models;
 
 import java.util.List;
 
-public class Evaluation extends Course {
-    private int mMaxPoint; // Maximum de points pour l'évaluation
+public class Evaluation {
+    private String evaluationId;
+    private String evaluationName;
+    private Course course; // Le cours auquel cette évaluation est associée
+    private List<Grade> grades; // Liste des notes pour cette évaluation
 
-    // Constructeur par défaut
-    public Evaluation() {
-        super(); // Appelle le constructeur par défaut de Course
+    // Constructeur
+    public Evaluation(String evaluationId, String evaluationName, Course course, List<Grade> grades) {
+        this.evaluationId = evaluationId;
+        this.evaluationName = evaluationName;
+        this.course = course;
+        this.grades = grades;
     }
 
-    // Constructeur avec paramètres
-    public Evaluation(int id, String name, List<String> listStudent, List<String> listBloc, int idParent, double studentMoyen, int maxPoint) {
-        super(id, name, listStudent, listBloc, idParent, studentMoyen); // Appelle le constructeur de Course
-        this.mMaxPoint = maxPoint;
+    // Getters et Setters
+    public String getEvaluationId() {
+        return evaluationId;
     }
 
-    // Getter et Setter pour maxPoint
-    public int getmMaxPoint() {
-        return mMaxPoint;
+    public void setEvaluationId(String evaluationId) {
+        this.evaluationId = evaluationId;
     }
 
-    public void setmMaxPoint(int mMaxPoint) {
-        this.mMaxPoint = mMaxPoint;
+    public String getEvaluationName() {
+        return evaluationName;
     }
 
-    // Redéfinition de toString pour inclure le maximum de points
+    public void setEvaluationName(String evaluationName) {
+        this.evaluationName = evaluationName;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public List<Grade> getGrades() {
+        return grades;
+    }
+
+    public void setGrades(List<Grade> grades) {
+        this.grades = grades;
+    }
+
     @Override
     public String toString() {
         return "Evaluation{" +
-                "maxPoint=" + mMaxPoint +
-                ", " + super.toString() + // Appel à toString() de Course pour inclure les informations du parent
+                "evaluationId='" + evaluationId + '\'' +
+                ", evaluationName='" + evaluationName + '\'' +
+                ", course=" + (course != null ? course.getCourseName() : "null") +
+                ", notes=" + grades +
                 '}';
     }
 }

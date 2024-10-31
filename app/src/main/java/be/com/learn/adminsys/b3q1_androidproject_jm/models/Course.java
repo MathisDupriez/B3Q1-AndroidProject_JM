@@ -1,55 +1,61 @@
 package be.com.learn.adminsys.b3q1_androidproject_jm.models;
 
 import java.util.List;
-import java.util.ArrayList;
 
-public class Course extends Bloc {
-    private double mStudentMoyen; // Moyenne des notes des étudiants
-    private List<Evaluation> mListEvaluation; // Liste des évaluations
+public class Course {
+    private String courseId;
+    private String courseName;
+    private Bloc bloc; // Le bloc auquel ce cours est associé
+    private List<Evaluation> evaluations; // Les évaluations liées à ce cours
 
-    // Constructeur par défaut
-    public Course() {
-        super(); // Appelle le constructeur par défaut de Bloc
-        this.mListEvaluation = new ArrayList<>(); // Initialisation de la liste d'évaluations
+    // Constructeur
+    public Course(String courseId, String courseName, Bloc bloc, List<Evaluation> evaluations) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.bloc = bloc;
+        this.evaluations = evaluations;
     }
 
-    // Constructeur avec paramètres
-    public Course(int id,
-                  String name,
-                  List<String> listStudent,
-                  List<String> listBloc,
-                  int idParent,
-                  double studentMoyen) {
-        super(id, name, listStudent, listBloc, idParent); // Appelle le constructeur de Bloc
-        this.mStudentMoyen = studentMoyen;
-        this.mListEvaluation = new ArrayList<>(); // Initialisation de la liste d'évaluations
+    // Getters et Setters
+    public String getCourseId() {
+        return courseId;
     }
 
-    // Getter et Setter pour l'attribut mStudentMoyen
-    public double getStudentMoyen() {
-        return mStudentMoyen;
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 
-    public void setStudentMoyen(double studentMoyen) {
-        this.mStudentMoyen = studentMoyen;
+    public String getCourseName() {
+        return courseName;
     }
 
-    // Getter et Setter pour la liste d'évaluations
-    public List<Evaluation> getListEvaluation() {
-        return mListEvaluation;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
-    public void setListEvaluation(List<Evaluation> listEvaluation) {
-        this.mListEvaluation = listEvaluation;
+    public Bloc getBloc() {
+        return bloc;
     }
 
-    // Redéfinition de toString pour inclure la moyenne des étudiants et la liste des évaluations
+    public void setBloc(Bloc bloc) {
+        this.bloc = bloc;
+    }
+
+    public List<Evaluation> getEvaluations() {
+        return evaluations;
+    }
+
+    public void setEvaluations(List<Evaluation> evaluations) {
+        this.evaluations = evaluations;
+    }
+
     @Override
     public String toString() {
         return "Course{" +
-                "mStudentMoyen=" + mStudentMoyen +
-                ", mListEvaluation=" + mListEvaluation +
-                ", " + super.toString() + // Appel à toString() de Bloc pour inclure les informations du parent
+                "courseId='" + courseId + '\'' +
+                ", courseName='" + courseName + '\'' +
+                ", bloc=" + (bloc != null ? bloc.getName() : "null") +
+                ", evaluations=" + evaluations +
                 '}';
     }
 }
