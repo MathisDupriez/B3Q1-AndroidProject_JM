@@ -1,26 +1,25 @@
 package be.com.learn.adminsys.b3q1_androidproject_jm.controllers;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.R;
+import be.com.learn.adminsys.b3q1_androidproject_jm.view.MainViewController;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    private MainViewController mmainViewController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        // creation de l'instance de MainViewController
+        mmainViewController = new MainViewController(this);
+        setContentView(mmainViewController.getRootView());
+
+        // test action : change bg color
+        mmainViewController.getRootView().setBackgroundColor(Color.BLUE);
     }
 }
