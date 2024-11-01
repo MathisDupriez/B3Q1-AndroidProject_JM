@@ -61,12 +61,6 @@ public class Bloc {
 
     @Override
     public String toString() {
-        return "Bloc{" +
-                "blocId='" + blocId + '\'' +
-                ", name='" + name + '\'' +
-                ", students=" + students +
-                ", subBlocs=" + subBlocs +
-                ", parentBloc=" + (parentBloc != null ? parentBloc.getName() : "null") +
-                '}';
+        return name;
     }
 }

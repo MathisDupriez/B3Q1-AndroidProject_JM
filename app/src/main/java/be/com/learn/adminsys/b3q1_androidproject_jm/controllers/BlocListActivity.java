@@ -12,7 +12,7 @@ import be.com.learn.adminsys.b3q1_androidproject_jm.view.MainViewController;
 import java.util.List;
 
 public class BlocListActivity extends AppCompatActivity {
-
+    // CORRECTING i think this class need to Be to primary page
     private RecyclerView recyclerViewBlocs;
     private MainViewController mainViewController;
 

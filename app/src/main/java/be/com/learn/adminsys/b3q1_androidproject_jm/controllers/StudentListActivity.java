@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentListActivity extends AppCompatActivity {
-
+    // CORRECTION, pretty good, it manage the data, we need to setup a viewController for this activity
     private ListView listViewStudents;
     private List<String> studentNames;
 
@@ -19,6 +19,7 @@ public class StudentListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_list);
 
+        // CORRECTING this is the part of the code that we need to correct and move to a viewController
         listViewStudents = findViewById(R.id.listViewStudents);
 
         // Initialiser les étudiants pour tester

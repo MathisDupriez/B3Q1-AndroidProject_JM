@@ -11,7 +11,7 @@ import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnViewBlocs, btnViewCourses, btnViewStudents;
-
+    // CORRECTING this was a good test class, keep it to test correction, and after switch to the main page that contains the blocs
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

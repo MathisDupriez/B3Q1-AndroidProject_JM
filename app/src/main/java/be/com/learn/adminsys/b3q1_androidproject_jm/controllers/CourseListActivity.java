@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseListActivity extends AppCompatActivity {
-
+    // CORRECTING,this class need to be deleted, and the bloc class need to be only one that we use recursively
+    // Also CORRECTING, once we click on a bloc, we should be able to see the courses in that bloc that are also blocks
     private ListView listViewCourses;
     private MainViewController mainViewController;
     private List<String> courseNames;

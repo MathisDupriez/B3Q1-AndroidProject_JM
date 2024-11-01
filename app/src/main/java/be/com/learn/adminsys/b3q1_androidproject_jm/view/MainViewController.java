@@ -7,7 +7,7 @@ import be.com.learn.adminsys.b3q1_androidproject_jm.models.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.models.Course;
 
 public class MainViewController {
-
+    // CORRECTING, All of this code should be in the MainActivty, and the BlocListActivity should be the main page
     private List<Bloc> blocs = new ArrayList<>();
     private List<Course> courses = new ArrayList<>();
 
