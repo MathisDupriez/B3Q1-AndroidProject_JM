@@ -1,3 +1,0 @@
-1 ) Rewrite the MainActivity and the MainViewController to get a proper MVC pattern.
-   1.1 ) The MainActivity should only contain the Data Manipulation and the processing, this is done by creating an interface in MainViewController
-    1.2 ) The MainViewController should only contain the View Manipulation, this is done by creating an interface in MainActivity
