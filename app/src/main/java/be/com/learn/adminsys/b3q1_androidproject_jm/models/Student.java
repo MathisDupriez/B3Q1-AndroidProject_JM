@@ -1,6 +1,8 @@
 package be.com.learn.adminsys.b3q1_androidproject_jm.models;
 
-public class Student {
+import java.io.Serializable;
+
+public class Student implements Serializable { // Implémente Serializable
     private String matricule;
     private String firstName;
     private String lastName;
@@ -14,7 +16,7 @@ public class Student {
         this.bloc = bloc;
     }
 
-    // Getters and Setters
+    // Getters et Setters
     public String getMatricule() {
         return matricule;
     }
@@ -45,5 +47,10 @@ public class Student {
 
     public void setBloc(Bloc bloc) {
         this.bloc = bloc;
+    }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName;
     }
 }
