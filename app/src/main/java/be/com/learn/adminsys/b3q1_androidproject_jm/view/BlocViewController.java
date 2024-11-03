@@ -18,7 +18,6 @@ public class BlocViewController {
     private final Button mBtnAddBloc;
     private final Button mBtnModifyStudent;
 
-
     public BlocViewController(View rootView, Context context) {
         this.recyclerViewBlocs = rootView.findViewById(R.id.recyclerViewBlocs);
         this.recyclerViewBlocs.setLayoutManager(new LinearLayoutManager(context));
@@ -26,7 +25,6 @@ public class BlocViewController {
 
         this.mBtnAddBloc = rootView.findViewById(R.id.btnAddBloc);
         this.mBtnModifyStudent = rootView.findViewById(R.id.btnModifyStudent);
-
     }
 
     private void setListeners(BlocViewControllerInterface listener) {

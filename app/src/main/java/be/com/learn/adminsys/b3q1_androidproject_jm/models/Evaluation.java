@@ -1,22 +1,21 @@
 package be.com.learn.adminsys.b3q1_androidproject_jm.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
-class Evaluation {
-    private String nom;
-    private ArrayList<Grade> grades;
+public class Evaluation extends Course {
 
-    public Evaluation(String nom) {
-        this.nom = nom;
-        this.grades = new ArrayList<>();
+    // Constructeur principal
+    public Evaluation(String blocId, String name, List<Student> students, List<Bloc> subBlocs, Bloc parentBloc) {
+        super(blocId, name, students, subBlocs, parentBloc);
     }
 
-    public String getNom() {
-        return nom;
+    // Constructeur sans paramètres
+    public Evaluation() {
+        super();
     }
 
-    public void addGrade(Grade grade) {
-        grades.add(grade);
+    @Override
+    public String toString() {
+        return super.toString() + " - Evaluation";
     }
 }
