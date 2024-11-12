@@ -1,17 +1,17 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.controllers;
+package be.com.learn.adminsys.b3q1_androidproject_jm.oldControllers;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
-import be.com.learn.adminsys.b3q1_androidproject_jm.models.Bloc;
-import be.com.learn.adminsys.b3q1_androidproject_jm.models.DataCollector;
-import be.com.learn.adminsys.b3q1_androidproject_jm.view.BlocViewController;
+import be.com.learn.adminsys.b3q1_androidproject_jm.oldModels.Bloc;
+import be.com.learn.adminsys.b3q1_androidproject_jm.oldModels.DataCollector;
+import be.com.learn.adminsys.b3q1_androidproject_jm.oldView.BlocViewController;
 
 public class BlocListActivity extends AppCompatActivity implements BlocViewController.BlocViewControllerInterface {
 

@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.models;
+package be.com.learn.adminsys.b3q1_androidproject_jm.oldModels;
 
 class Grade {
     private String matricule;

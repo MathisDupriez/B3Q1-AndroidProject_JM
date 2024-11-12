@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.controllers;
+package be.com.learn.adminsys.b3q1_androidproject_jm.oldControllers;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
-import be.com.learn.adminsys.b3q1_androidproject_jm.models.Bloc;
+import be.com.learn.adminsys.b3q1_androidproject_jm.oldModels.Bloc;
 
 import java.util.List;
 

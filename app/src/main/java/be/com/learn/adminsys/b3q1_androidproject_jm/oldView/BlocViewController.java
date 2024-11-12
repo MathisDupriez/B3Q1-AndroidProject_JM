@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.view;
+package be.com.learn.adminsys.b3q1_androidproject_jm.oldView;
 
 import android.content.Context;
 import android.view.View;
@@ -7,7 +7,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
-import be.com.learn.adminsys.b3q1_androidproject_jm.models.Bloc;
+import be.com.learn.adminsys.b3q1_androidproject_jm.oldModels.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class BlocViewController {

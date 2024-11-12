@@ -1,7 +1,6 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.models;
+package be.com.learn.adminsys.b3q1_androidproject_jm.oldModels;
 
 import java.util.List;
-import java.util.ArrayList;
 
 public class Course extends Bloc {
 
