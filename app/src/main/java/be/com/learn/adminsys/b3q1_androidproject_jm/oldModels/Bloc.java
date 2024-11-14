@@ -1,11 +1,12 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.models;
+package be.com.learn.adminsys.b3q1_androidproject_jm.oldModels;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Bloc {
+public class Bloc implements Serializable { // Implémente Serializable
     private String blocId;
     private String name;
-    private List<Student> students;  // Liste des étudiants (référence directe)
+    private List<Student> students;  // Liste des étudiants
     private List<Bloc> subBlocs;     // Liste des sous-blocs
     private Bloc parentBloc;         // Référence au bloc parent
 
