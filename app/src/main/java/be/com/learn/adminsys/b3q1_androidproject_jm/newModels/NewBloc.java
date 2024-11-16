@@ -7,81 +7,33 @@ import java.util.List;
 import java.util.Map;
 
 public class NewBloc implements Serializable {
-    private String name;
-    private Map<String, NewStudent> students;       // Map d'étudiants, avec le matricule comme clé
-    private List<NewEvaluation> evaluations;        // Liste d'évaluations gérée par le bloc
-
-    // Constructor
-    public NewBloc(String name) {
+    private Map<String,NewStudent> students;
+    private List<NewCourse> courses;
+    String name;
+    public NewBloc(String name,Map<String,NewStudent> students, List<NewCourse> courses) {
         this.name = name;
-        this.students = new HashMap<>();    // Initialisation de la Map des étudiants
-        this.evaluations = new ArrayList<>();
+        this.students = students;
+        this.courses = courses;
     }
-
-    // Getters et Setters pour les attributs de base
+    // Getters et Setters
+    // Add student to the bloc
+    public void addStudent(NewStudent student) {
+        students.put(student.getMatricule(), student);
+    }
+    // Add course to the bloc
+    public void addCourse(NewCourse course) {
+        courses.add(course);
+    }
+    // return the list of courses in the bloc
+    public List<NewCourse> getCourses() {
+        return courses;
+    }
+    // return the name of the bloc
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    // Méthodes de gestion des étudiants
-    public void addStudent(NewStudent student) {
-        // Vérifie si le matricule est déjà dans la Map
-        if (students.containsKey(student.getMatricule())) {
-            throw new IllegalArgumentException("Erreur : Un étudiant avec le matricule " + student.getMatricule() + " existe déjà.");
-        } else {
-            students.put(student.getMatricule(), student);
-        }
-    }
-
-    public void removeStudent(String matricule) {
-        students.remove(matricule);
-    }
-
-    public NewStudent getStudentByMatricule(String matricule) {
-        return students.get(matricule);
-    }
-
-    public List<NewStudent> getStudents() {
-        return new ArrayList<>(students.values());  // Retourne une copie des étudiants sous forme de liste
-    }
-
-    public int getStudentCount() {
-        return students.size();
-    }
-
-    public boolean hasStudent(String matricule) {
-        return students.containsKey(matricule);
-    }
-
-    // Méthodes de gestion des évaluations
-    public void addEvaluation(NewEvaluation evaluation) {
-        if (!evaluations.contains(evaluation)) {  // Évite les doublons
-            evaluations.add(evaluation);
-        }
-    }
-
-    public void removeEvaluation(NewEvaluation evaluation) {
-        evaluations.remove(evaluation);
-    }
-
-    public List<NewEvaluation> getEvaluations() {
-        return new ArrayList<>(evaluations);  // Retourne une copie pour éviter les modifications directes
-    }
-
-    public int getEvaluationCount() {
-        return evaluations.size();
-    }
-
-    public boolean hasEvaluation(NewEvaluation evaluation) {
-        return evaluations.contains(evaluation);
-    }
-
-    @Override
-    public String toString() {
-        return name;
+    // return the reférence of list of students in the bloc
+    public Map<String, NewStudent> getStudents() {
+        return students;
     }
 }
