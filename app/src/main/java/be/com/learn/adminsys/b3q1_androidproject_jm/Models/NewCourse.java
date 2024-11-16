@@ -1,12 +1,10 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.newModels;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.newModels.evaluation.NewEvaluation;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.NewEvaluation;
 
 public class NewCourse implements Serializable {
     private Map<String,NewStudent> students;

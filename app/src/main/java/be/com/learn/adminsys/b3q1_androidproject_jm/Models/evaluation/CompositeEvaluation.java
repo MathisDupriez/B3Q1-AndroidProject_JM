@@ -1,11 +1,11 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.newModels.evaluation;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.newModels.NewStudent;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewStudent;
 
 public class CompositeEvaluation extends NewEvaluation implements Serializable {
     private List<NewEvaluation> evaluations;

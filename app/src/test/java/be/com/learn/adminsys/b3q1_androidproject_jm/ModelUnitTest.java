@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import java.util.*;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.newModels.*;
-import be.com.learn.adminsys.b3q1_androidproject_jm.newModels.evaluation.*;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.*;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.*;
 
 import static org.junit.Assert.*;
 

@@ -1,14 +1,9 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.newModels.evaluation;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.newModels.NewGrade;
-import be.com.learn.adminsys.b3q1_androidproject_jm.newModels.NewStudent;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewStudent;
 
 public abstract class NewEvaluation implements Serializable {
     private String name;

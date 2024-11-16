@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.newModels;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Models;
 
 import java.io.Serializable;
 
