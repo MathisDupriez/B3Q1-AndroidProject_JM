@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -48,12 +49,14 @@ public class CourseFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         addButton = view.findViewById(R.id.addCourseButton); // Référence au bouton "Add"
-
+        TextView textCourseTitle = view.findViewById(R.id.textCourseTitle);
         // Récupère le bloc sélectionné depuis les arguments
         if (getArguments() != null) {
             selectedBloc = (NewBloc) getArguments().getSerializable("selectedBloc");
         }
-
+        if (selectedBloc != null) {
+            textCourseTitle.setText("Cours de : " + selectedBloc.getName());
+        }
         // Initialiser la map des étudiants si le bloc sélectionné en contient des étudiants
         if (selectedBloc != null) {
             studentsMap = selectedBloc.getStudents(); // Supposons que NewBloc a une méthode getStudents() qui retourne une Map

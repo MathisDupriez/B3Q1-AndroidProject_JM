@@ -58,7 +58,11 @@
             android:paddingEnd="8dp" />
     </LinearLayout>
 
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="#007BFF" />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -71,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:backgroundTint="@android:color/holo_blue_dark"
+        android:backgroundTint="#007BFF"
         android:text="Ajouter un cours"
         android:textColor="@android:color/white"
         android:textStyle="bold" />

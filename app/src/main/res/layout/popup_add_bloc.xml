@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:backgroundTint="@android:color/holo_blue_dark"
+        android:backgroundTint="#007BFF"
         android:text="Confirmer"
         android:textColor="@android:color/white"
         android:textStyle="bold" />
