@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_margin="20dp"
+    android:background="@android:color/white"
+    android:elevation="8dp">
+
+    <!-- Titre de la popup -->
+    <TextView
+        android:id="@+id/popupEvaluationTitle"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Ajouter une Évaluation"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Champ de texte pour le nom de l'évaluation -->
+    <EditText
+        android:id="@+id/editTextEvaluationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nom de l'évaluation"
+        android:padding="16dp"
+        android:background="@android:drawable/editbox_background_normal"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Champ de texte pour les points maximum -->
+    <EditText
+        android:id="@+id/editTextMaxPoints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Points maximum"
+        android:inputType="number"
+        android:padding="16dp"
+        android:background="@android:drawable/editbox_background_normal"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:layout_marginBottom="20dp" />
+
+    <!-- CheckBox pour choisir si l'évaluation est finale ou composite -->
+    <CheckBox
+        android:id="@+id/checkBoxIsFinal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Évaluation finale"
+        android:textSize="16sp"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Bouton Confirmer -->
+    <Button
+        android:id="@+id/confirmEvaluationButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Confirmer"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <!-- Bouton Annuler -->
+    <Button
+        android:id="@+id/cancelEvaluationButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/darker_gray"
+        android:text="Annuler"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
+</LinearLayout>

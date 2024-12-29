@@ -81,8 +81,8 @@ public class DatabaseCollector {
         CompositeEvaluation composite = new CompositeEvaluation(name, maxPoint, students);
 
         // Ajouter des évaluations finales dans la composite
-        composite.AddEvaluation(new FinalEvaluation("Sub Exam 1 (Final)", maxPoint / 2, students));
-        composite.AddEvaluation(new FinalEvaluation("Sub Exam 2 (Final)", maxPoint / 2, students));
+        composite.addEvaluation(new FinalEvaluation("Sub Exam 1 (Final)", maxPoint / 2, students));
+        composite.addEvaluation(new FinalEvaluation("Sub Exam 2 (Final)", maxPoint / 2, students));
 
         return composite;
     }

@@ -6,12 +6,12 @@ import java.util.Map;
 
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.NewEvaluation;
 
-public class NewCourse implements Serializable {
+public class NewCourse implements Serializable, EvaluationParent {
     private Map<String,NewStudent> students;
     private List<NewEvaluation> evaluations;
     private String name;
 
-    public NewCourse(String name,Map<String,NewStudent> students, List<NewEvaluation> evaluations) {
+    public NewCourse( String name,Map<String,NewStudent> students, List<NewEvaluation> evaluations) {
         this.name = name;
         this.students = students;
         this.evaluations = evaluations;
@@ -26,10 +26,12 @@ public class NewCourse implements Serializable {
         return students;
     }
     // get the list of evaluations in the course
+    @Override
     public List<NewEvaluation> getEvaluations() {
         return evaluations;
     }
     // add evaluation to the course
+    @Override
     public void addEvaluation(NewEvaluation evaluation) {
         evaluations.add(evaluation);
     }

@@ -173,7 +173,7 @@ public class CourseFragment extends Fragment {
     private void navigateToEvaluations(NewCourse course) {
         // Naviguer vers EvaluationFragment avec le cours sélectionné
         Bundle args = new Bundle();
-        args.putSerializable("selectedCourse", course);
+        args.putSerializable("selectedParent", course);
         EvaluationFragment fragment = new EvaluationFragment();
         fragment.setArguments(args);
 

@@ -5,19 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.EvaluationParent;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewStudent;
 
-public class CompositeEvaluation extends NewEvaluation implements Serializable {
+public class CompositeEvaluation extends NewEvaluation implements Serializable, EvaluationParent {
     private List<NewEvaluation> evaluations;
 
     public CompositeEvaluation(String name, int maxPoint, Map<String, NewStudent> students) {
         super(name, maxPoint, students);
         evaluations = new ArrayList<>();
     }
-
-    public void AddEvaluation(NewEvaluation evaluation) {
+    @Override
+    public void addEvaluation(NewEvaluation evaluation) {
         evaluations.add(evaluation);
     }
+    @Override
     public List<NewEvaluation> getEvaluations() {
         return evaluations;
     }

@@ -4,24 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
-
+    <TextView
+        android:id="@+id/textEvaluationTitle"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="Évaluations"
+        android:gravity="center"
+        android:textColor="#007BFF"
+        android:textSize="25sp" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewEvaluations"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+    <!-- Bouton en bas -->
     <Button
         android:id="@+id/addEvaluationButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Evaluation"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@android:color/black"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Ajouter une évaluation"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:gravity="center" />
+        android:textStyle="bold" />
 </LinearLayout>

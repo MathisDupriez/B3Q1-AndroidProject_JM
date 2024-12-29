@@ -3,6 +3,7 @@ package be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation;
 import java.io.Serializable;
 import java.util.Map;
 
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.EvaluationParent;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewStudent;
 
 public abstract class NewEvaluation implements Serializable {
@@ -16,7 +17,6 @@ public abstract class NewEvaluation implements Serializable {
         this.students = students;
     }
     public abstract double GetAverage();
-
     public Map<String, NewStudent> getStudents() {
         return students;
     }
