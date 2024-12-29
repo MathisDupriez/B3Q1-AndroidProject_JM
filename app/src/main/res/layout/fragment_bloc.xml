@@ -4,20 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
-
-    <!-- ToggleButton en haut -->
-    <ToggleButton
-        android:id="@+id/toggleButtonBlocStudent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:checked="false"
-        android:textOn="Student"
-        android:textOff="Bloc"
-        android:layout_marginBottom="16dp"
-        android:background="@android:color/black"
-        android:textColor="@android:color/white" />
-
     <!-- RecyclerView qui prend tout l'espace disponible -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewBlocs"
@@ -30,14 +16,9 @@
         android:id="@+id/addBlocButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Bloc"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@android:color/black"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="Ajouter un Bloc"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:gravity="center" />
+        android:textStyle="bold" />
 </LinearLayout>
