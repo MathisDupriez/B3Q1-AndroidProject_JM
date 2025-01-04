@@ -4,26 +4,26 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class NewBloc implements Serializable {
-    private Map<String,NewStudent> students;
-    private List<NewCourse> courses;
+public class Bloc implements Serializable {
+    private Map<String, Student> students;
+    private List<Course> courses;
     String name;
-    public NewBloc(String name,Map<String,NewStudent> students, List<NewCourse> courses) {
+    public Bloc(String name, Map<String, Student> students, List<Course> courses) {
         this.name = name;
         this.students = students;
         this.courses = courses;
     }
     // Getters et Setters
     // Add student to the bloc
-    public void addStudent(NewStudent student) {
+    public void addStudent(Student student) {
         students.put(student.getMatricule(), student);
     }
     // Add course to the bloc
-    public void addCourse(NewCourse course) {
+    public void addCourse(Course course) {
         courses.add(course);
     }
     // return the list of courses in the bloc
-    public List<NewCourse> getCourses() {
+    public List<Course> getCourses() {
         return courses;
     }
     // return the name of the bloc
@@ -31,7 +31,7 @@ public class NewBloc implements Serializable {
         return name;
     }
     // return the reférence of list of students in the bloc
-    public Map<String, NewStudent> getStudents() {
+    public Map<String, Student> getStudents() {
         return students;
     }
 }

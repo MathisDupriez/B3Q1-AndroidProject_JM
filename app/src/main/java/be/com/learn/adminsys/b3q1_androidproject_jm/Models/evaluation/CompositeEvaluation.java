@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.EvaluationParent;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewStudent;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Student;
 
 public class CompositeEvaluation extends NewEvaluation implements Serializable, EvaluationParent {
     private List<NewEvaluation> evaluations;
 
-    public CompositeEvaluation(String name, int maxPoint, Map<String, NewStudent> students) {
+    public CompositeEvaluation(String name, int maxPoint, Map<String, Student> students) {
         super(name, maxPoint, students);
         evaluations = new ArrayList<>();
     }

@@ -2,12 +2,12 @@ package be.com.learn.adminsys.b3q1_androidproject_jm.Models;
 
 import java.io.Serializable;
 
-public class NewStudent implements Serializable {
+public class Student implements Serializable {
     private String matricule;
     private String firstName;
     private String lastName;
 
-    public NewStudent(String matricule, String firstName, String lastName) {
+    public Student(String matricule, String firstName, String lastName) {
         this.matricule = matricule;
         this.firstName = firstName;
         this.lastName = lastName;

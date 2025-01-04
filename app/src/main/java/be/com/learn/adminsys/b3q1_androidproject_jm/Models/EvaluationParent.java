@@ -9,7 +9,7 @@ import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.NewEvaluat
 public interface EvaluationParent extends Serializable {
     List<NewEvaluation> getEvaluations();
     void addEvaluation(NewEvaluation evaluation);
-    Map<String, NewStudent> getStudents();
+    Map<String, Student> getStudents();
     String getName();
 }
 

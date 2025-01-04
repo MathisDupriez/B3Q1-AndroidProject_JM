@@ -10,19 +10,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewBloc;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class BlocAdapter extends RecyclerView.Adapter<BlocAdapter.BlocViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClick(NewBloc bloc);
+        void onItemClick(Bloc bloc);
     }
 
-    private final List<NewBloc> blocs;
+    private final List<Bloc> blocs;
     private final OnItemClickListener listener;
 
-    public BlocAdapter(List<NewBloc> blocs, OnItemClickListener listener) {
+    public BlocAdapter(List<Bloc> blocs, OnItemClickListener listener) {
         this.blocs = blocs;
         this.listener = listener;
     }
@@ -37,7 +37,7 @@ public class BlocAdapter extends RecyclerView.Adapter<BlocAdapter.BlocViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull BlocViewHolder holder, int position) {
-        NewBloc bloc = blocs.get(position);
+        Bloc bloc = blocs.get(position);
         holder.textViewBlocName.setText(bloc.getName());
         holder.itemView.setOnClickListener(v -> listener.onItemClick(bloc));
     }

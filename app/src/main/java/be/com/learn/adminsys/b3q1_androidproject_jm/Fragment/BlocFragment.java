@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,14 +23,14 @@ import android.widget.Toast;
 
 import be.com.learn.adminsys.b3q1_androidproject_jm.Controller.BlocAdapter;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DatabaseCollector;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewBloc;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class BlocFragment extends Fragment {
 
     private RecyclerView recyclerViewBlocs;
     private BlocAdapter blocAdapter;
-    private List<NewBloc> blocs = new ArrayList<>();
+    private List<Bloc> blocs = new ArrayList<>();
 
     @Nullable
     @Override
@@ -75,7 +72,7 @@ public class BlocFragment extends Fragment {
         confirmButton.setOnClickListener(view -> {
             String blocName = editTextBlocName.getText().toString();
             if (!blocName.isEmpty()) {
-                NewBloc newBloc = new NewBloc(blocName, new HashMap<>(), new ArrayList<>());
+                Bloc newBloc = new Bloc(blocName, new HashMap<>(), new ArrayList<>());
                 blocs.add(newBloc);
                 blocAdapter.notifyDataSetChanged();
                 popupWindow.dismiss();
@@ -87,7 +84,7 @@ public class BlocFragment extends Fragment {
         cancelButton.setOnClickListener(view -> popupWindow.dismiss());
     }
 
-    private void navigateToCourses(NewBloc bloc) {
+    private void navigateToCourses(Bloc bloc) {
         // Navigue vers le fragment CourseFragment
         Bundle args = new Bundle();
         args.putSerializable("selectedBloc", bloc);

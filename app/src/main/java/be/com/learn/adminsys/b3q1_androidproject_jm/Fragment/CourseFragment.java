@@ -26,9 +26,9 @@ import java.util.Map;
 
 import be.com.learn.adminsys.b3q1_androidproject_jm.Controller.CourseAdapter;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Controller.StudentAdapter;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewBloc;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewCourse;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewStudent;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Course;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Student;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class CourseFragment extends Fragment {
@@ -36,9 +36,9 @@ public class CourseFragment extends Fragment {
     private RecyclerView recyclerView;
     private CourseAdapter courseAdapter;
     private StudentAdapter studentAdapter;
-    private NewBloc selectedBloc;
+    private Bloc selectedBloc;
     private Switch toggleButton;
-    private Map<String, NewStudent> studentsMap;  // Utilisation d'une Map au lieu d'une List
+    private Map<String, Student> studentsMap;  // Utilisation d'une Map au lieu d'une List
     private Button addButton;
 
     @Nullable
@@ -52,7 +52,7 @@ public class CourseFragment extends Fragment {
         TextView textCourseTitle = view.findViewById(R.id.textCourseTitle);
         // Récupère le bloc sélectionné depuis les arguments
         if (getArguments() != null) {
-            selectedBloc = (NewBloc) getArguments().getSerializable("selectedBloc");
+            selectedBloc = (Bloc) getArguments().getSerializable("selectedBloc");
         }
         if (selectedBloc != null) {
             textCourseTitle.setText("Cours de : " + selectedBloc.getName());
@@ -98,7 +98,7 @@ public class CourseFragment extends Fragment {
 
     private void loadCourses() {
         if (selectedBloc != null) {
-            List<NewCourse> courses = selectedBloc.getCourses();
+            List<Course> courses = selectedBloc.getCourses();
             courseAdapter = new CourseAdapter(courses, course -> navigateToEvaluations(course));
             recyclerView.setAdapter(courseAdapter);
         }
@@ -123,7 +123,7 @@ public class CourseFragment extends Fragment {
             String courseName = editTextCourseName.getText().toString();
             if (!courseName.isEmpty()) {
                 // Crée un nouveau cours avec le nom saisi
-                NewCourse newCourse = new NewCourse(courseName, new HashMap<>(), new ArrayList<>());
+                Course newCourse = new Course(courseName, new HashMap<>(), new ArrayList<>());
                 // Ajoute le cours à la liste des cours dans le bloc sélectionné
                 selectedBloc.getCourses().add(newCourse);
                 courseAdapter.notifyDataSetChanged(); // Met à jour l'adaptateur de RecyclerView
@@ -161,7 +161,7 @@ public class CourseFragment extends Fragment {
 
             if (!firstName.isEmpty() && !lastName.isEmpty() && !matricule.isEmpty()) {
                 // Crée un nouveau student avec les informations saisies
-                NewStudent newStudent = new NewStudent(matricule, firstName, lastName);
+                Student newStudent = new Student(matricule, firstName, lastName);
                 studentsMap.put(matricule, newStudent);  // Utilisation de la clé matricule pour ajouter à la Map
                 studentAdapter.notifyDataSetChanged();  // Met à jour l'adaptateur de RecyclerView
                 popupWindow.dismiss();
@@ -173,7 +173,7 @@ public class CourseFragment extends Fragment {
         cancelStudentButton.setOnClickListener(view -> popupWindow.dismiss());
     }
 
-    private void navigateToEvaluations(NewCourse course) {
+    private void navigateToEvaluations(Course course) {
         // Naviguer vers EvaluationFragment avec le cours sélectionné
         Bundle args = new Bundle();
         args.putSerializable("selectedParent", course);

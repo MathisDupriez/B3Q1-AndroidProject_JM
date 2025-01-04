@@ -2,16 +2,16 @@ package be.com.learn.adminsys.b3q1_androidproject_jm.Models;
 
 import java.io.Serializable;
 
-public class NewGrade implements Serializable {
-    private NewStudent student;
+public class Grade implements Serializable {
+    private Student student;
     private double Point;
 
-    public NewGrade(NewStudent student, double Point) {
+    public Grade(Student student, double Point) {
         this.student = student;
         this.Point = Point;
     }
 
-    public NewStudent getStudent() {
+    public Student getStudent() {
         return student;
     }
 

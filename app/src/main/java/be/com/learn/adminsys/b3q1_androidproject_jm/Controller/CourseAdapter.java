@@ -10,19 +10,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.NewCourse;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Course;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClick(NewCourse course);
+        void onItemClick(Course course);
     }
 
-    private final List<NewCourse> courses;
+    private final List<Course> courses;
     private final OnItemClickListener listener;
 
-    public CourseAdapter(List<NewCourse> courses, OnItemClickListener listener) {
+    public CourseAdapter(List<Course> courses, OnItemClickListener listener) {
         this.courses = courses;
         this.listener = listener;
     }
@@ -37,7 +37,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
     @Override
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
-        NewCourse course = courses.get(position);
+        Course course = courses.get(position);
         holder.textViewCourseName.setText(course.getName());
         holder.itemView.setOnClickListener(v -> listener.onItemClick(course));
     }
