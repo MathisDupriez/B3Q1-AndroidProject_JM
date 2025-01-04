@@ -1,0 +1,31 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!-- Nom de l'évaluation -->
+    <TextView
+        android:id="@+id/textViewEvaluationName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Nom de l'évaluation finale"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:gravity="start|center_vertical" />
+
+    <!-- Points max -->
+    <TextView
+        android:id="@+id/textViewEvaluationMaxPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Points Max: 100"
+        android:textSize="14sp"
+        android:padding="8dp"
+        android:gravity="end|center_vertical" />
+</LinearLayout>

@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Fragment;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Fragments;
 
 import android.os.Bundle;
 import android.view.Gravity;
@@ -18,21 +18,22 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controller.EvaluationAdapter;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.CompositeEvaluation;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.FinalEvaluation;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.NewEvaluation;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.EvaluationParent;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.EvaluationAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Evaluation;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class EvaluationFragment extends Fragment {
 
     private RecyclerView recyclerViewEvaluations;
     private EvaluationAdapter evaluationAdapter;
-    private EvaluationParent selectedParent;  // Utilise EvaluationParent, peu importe si c'est NewCourse ou CompositeEvaluation
+    private AppDatabase db;
+    private int parentId; // ID du parent (e.g., Course ou CompositeEvaluation)
+    private String parentType; // Type du parent ("Course" ou "CompositeEvaluation")
+    String parentName;
 
     @Nullable
     @Override
@@ -41,39 +42,56 @@ public class EvaluationFragment extends Fragment {
         recyclerViewEvaluations = view.findViewById(R.id.recyclerViewEvaluations);
         recyclerViewEvaluations.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Ajouter un bouton pour afficher la popup
-        Button buttonAddEvaluation = view.findViewById(R.id.addEvaluationButton);
-        buttonAddEvaluation.setOnClickListener(v -> showAddEvaluationDialog(v));  // Ouvre la popup
-        TextView textViewParentName = view.findViewById(R.id.textEvaluationTitle);
-        // Récupère le parent sélectionné depuis les arguments
+        db = AppDatabase.getInstance(requireContext());
+
+        // Récupérer les arguments
         if (getArguments() != null) {
-            selectedParent = (EvaluationParent) getArguments().getSerializable("selectedParent");
+
+            parentId = getArguments().getInt("parentId");
+            parentType = getArguments().getString("parentType");
         }
-        if (selectedParent != null) {
-            textViewParentName.setText(selectedParent.getName());
-        }
+
+        // Initialiser le bouton d'ajout
+        Button buttonAddEvaluation = view.findViewById(R.id.addEvaluationButton);
+        buttonAddEvaluation.setOnClickListener(this::showAddEvaluationDialog);
+
+        // Mettre à jour le titre
+
+
+
+        setParentName();
         loadEvaluations();
         return view;
     }
 
-    private void loadEvaluations() {
-        if (selectedParent != null) {
-            List<NewEvaluation> evaluations = selectedParent.getEvaluations();
+    private void setParentName() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            if ("Course".equals(parentType)) {
+                parentName = "Evaluation du cours :  " + db.courseDao().getCourseById(parentId).getName();
+            } else {
+                parentName = "Sous-évaluation de : " + db.evaluationDao().getEvaluationById(parentId).getName();
+            }
 
-            if (evaluations != null) {
+            requireActivity().runOnUiThread(() -> {
+                TextView textEvaluationTitle = requireView().findViewById(R.id.textEvaluationTitle);
+                textEvaluationTitle.setText(parentName);
+            });
+        });
+    }
+
+    private void loadEvaluations() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Evaluation> evaluations = db.evaluationDao().getEvaluationsByParent(parentId, parentType);
+
+            requireActivity().runOnUiThread(() -> {
                 evaluationAdapter = new EvaluationAdapter(evaluations, evaluation -> {
-                    if (evaluation instanceof CompositeEvaluation) {
-                        navigateToSubEvaluations((CompositeEvaluation) evaluation);
+                    if ("Composite".equals(evaluation.getType())) {
+                        navigateToSubEvaluations(evaluation);
                     }
                 });
                 recyclerViewEvaluations.setAdapter(evaluationAdapter);
-            } else {
-                Toast.makeText(requireContext(), "Aucune évaluation disponible", Toast.LENGTH_SHORT).show();
-            }
-        }else {
-            Toast.makeText(requireContext(), "Problème de chargement du parents", Toast.LENGTH_SHORT).show();
-        }
-
+            });
+        });
     }
 
     private void showAddEvaluationDialog(View v) {
@@ -93,7 +111,7 @@ public class EvaluationFragment extends Fragment {
         CheckBox checkBoxIsFinal = popupView.findViewById(R.id.checkBoxIsFinal);
         Button confirmButton = popupView.findViewById(R.id.confirmEvaluationButton);
         Button cancelButton = popupView.findViewById(R.id.cancelEvaluationButton);
-
+        editTextMaxPoints.setText("20");
         confirmButton.setOnClickListener(view -> {
             String evaluationName = editTextEvaluationName.getText().toString();
             String maxPointsStr = editTextMaxPoints.getText().toString();
@@ -102,28 +120,29 @@ public class EvaluationFragment extends Fragment {
                 Toast.makeText(requireContext(), "Tous les champs doivent être remplis", Toast.LENGTH_SHORT).show();
             } else {
                 int maxPoints = Integer.parseInt(maxPointsStr);
+                String type = checkBoxIsFinal.isChecked() ? "Final" : "Composite";
 
-                // Vérifier si c'est une évaluation finale ou composite
-                NewEvaluation newEvaluation;
-                if (checkBoxIsFinal.isChecked()) {
-                    newEvaluation = new FinalEvaluation(evaluationName, maxPoints, selectedParent.getStudents());
-                } else {
-                    newEvaluation = new CompositeEvaluation(evaluationName, maxPoints, selectedParent.getStudents());
-                }
+                Evaluation newEvaluation = new Evaluation(maxPoints, evaluationName, parentType, parentId, type);
 
-                selectedParent.addEvaluation(newEvaluation);  // Appelle la méthode d'ajout sur l'objet parent
-                evaluationAdapter.notifyDataSetChanged();
-                popupWindow.dismiss();
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    db.evaluationDao().insert(newEvaluation);
+
+                    requireActivity().runOnUiThread(() -> {
+                        loadEvaluations();
+                        popupWindow.dismiss();
+                    });
+                });
             }
         });
 
         cancelButton.setOnClickListener(view -> popupWindow.dismiss());
     }
 
-    private void navigateToSubEvaluations(CompositeEvaluation compositeEvaluation) {
+    private void navigateToSubEvaluations(Evaluation compositeEvaluation) {
         // Naviguer vers un nouveau fragment pour afficher les sous-évaluations
         Bundle args = new Bundle();
-        args.putSerializable("selectedParent", compositeEvaluation);  // Passer CompositeEvaluation comme parent
+        args.putInt("parentId", compositeEvaluation.getId());
+        args.putString("parentType", "CompositeEvaluation");
         EvaluationFragment fragment = new EvaluationFragment();
         fragment.setArguments(args);
 

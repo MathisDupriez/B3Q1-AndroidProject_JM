@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Fragment;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Fragments;
 
 import android.os.Bundle;
 import android.view.Gravity;
@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controller.CourseAdapter;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controller.StudentAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.CourseAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.StudentAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Course;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Student;
@@ -38,8 +40,10 @@ public class CourseFragment extends Fragment {
     private StudentAdapter studentAdapter;
     private Bloc selectedBloc;
     private Switch toggleButton;
-    private Map<String, Student> studentsMap;  // Utilisation d'une Map au lieu d'une List
+    private Map<String, Student> studentsMap;
     private Button addButton;
+
+    private AppDatabase db;
 
     @Nullable
     @Override
@@ -48,48 +52,41 @@ public class CourseFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerViewCourses);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        addButton = view.findViewById(R.id.addCourseButton); // Référence au bouton "Add"
+        db = AppDatabase.getInstance(requireContext());
+
+        addButton = view.findViewById(R.id.addCourseButton);
         TextView textCourseTitle = view.findViewById(R.id.textCourseTitle);
-        // Récupère le bloc sélectionné depuis les arguments
+
         if (getArguments() != null) {
             selectedBloc = (Bloc) getArguments().getSerializable("selectedBloc");
         }
         if (selectedBloc != null) {
             textCourseTitle.setText("Cours de : " + selectedBloc.getName());
-        }
-        // Initialiser la map des étudiants si le bloc sélectionné en contient des étudiants
-        if (selectedBloc != null) {
-            studentsMap = selectedBloc.getStudents(); // Supposons que NewBloc a une méthode getStudents() qui retourne une Map
+            loadStudents();
         } else {
             studentsMap = new HashMap<>();
         }
 
-        // Initialiser l'adaptateur pour les cours
         loadCourses();
 
-        // Initialiser l'adaptateur pour les étudiants (en utilisant la Map)
-        studentAdapter = new StudentAdapter(new ArrayList<>(studentsMap.values()));
-
-        // Set the listener for the toggle button
         toggleButton = view.findViewById(R.id.toggleButtonBlocStudent);
         toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                // Afficher les étudiants
                 recyclerView.setAdapter(studentAdapter);
-                addButton.setText("Ajouter un étudiant");  // Changer le texte du bouton
+                textCourseTitle.setText("Étudiants de : " + selectedBloc.getName());
+                addButton.setText("Ajouter un étudiant");
             } else {
-                // Afficher les cours
-                loadCourses();
-                addButton.setText("Ajouter un cours"); // Changer le texte du bouton
+                recyclerView.setAdapter(courseAdapter);
+                textCourseTitle.setText("Cours de : " + selectedBloc.getName());
+                addButton.setText("Ajouter un cours");
             }
         });
 
-        // Ajouter un bouton pour ouvrir la popup d'ajout
         addButton.setOnClickListener(v -> {
             if (toggleButton.isChecked()) {
-                showAddStudentDialog(v);  // Ouvrir la popup pour ajouter un étudiant
+                showAddStudentDialog(v);
             } else {
-                showAddCourseDialog(v);   // Ouvrir la popup pour ajouter un cours
+                showAddCourseDialog(v);
             }
         });
 
@@ -98,10 +95,26 @@ public class CourseFragment extends Fragment {
 
     private void loadCourses() {
         if (selectedBloc != null) {
-            List<Course> courses = selectedBloc.getCourses();
-            courseAdapter = new CourseAdapter(courses, course -> navigateToEvaluations(course));
-            recyclerView.setAdapter(courseAdapter);
+            Executors.newSingleThreadExecutor().execute(() -> {
+                List<Course> courses = db.courseDao().getCoursesByBlocId(selectedBloc.getId());
+                requireActivity().runOnUiThread(() -> {
+                    courseAdapter = new CourseAdapter(courses, course -> navigateToEvaluations(course));
+                    recyclerView.setAdapter(courseAdapter);
+                });
+            });
         }
+    }
+
+    private void loadStudents() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Student> students = db.studentDao().getStudentsByBlocId(selectedBloc.getId());
+            studentsMap = new HashMap<>();
+            for (Student student : students) {
+                studentsMap.put(student.getMatricule(), student);
+            }
+
+            requireActivity().runOnUiThread(() -> studentAdapter = new StudentAdapter(new ArrayList<>(studentsMap.values())));
+        });
     }
 
     private void showAddCourseDialog(View v) {
@@ -122,12 +135,15 @@ public class CourseFragment extends Fragment {
         confirmCourseButton.setOnClickListener(view -> {
             String courseName = editTextCourseName.getText().toString();
             if (!courseName.isEmpty()) {
-                // Crée un nouveau cours avec le nom saisi
-                Course newCourse = new Course(courseName, new HashMap<>(), new ArrayList<>());
-                // Ajoute le cours à la liste des cours dans le bloc sélectionné
-                selectedBloc.getCourses().add(newCourse);
-                courseAdapter.notifyDataSetChanged(); // Met à jour l'adaptateur de RecyclerView
-                popupWindow.dismiss();
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    Course newCourse = new Course(courseName, selectedBloc.getId());
+                    db.courseDao().insert(newCourse);
+
+                    requireActivity().runOnUiThread(() -> {
+                        loadCourses();
+                        popupWindow.dismiss();
+                    });
+                });
             } else {
                 Toast.makeText(requireContext(), "Le nom du cours ne peut pas être vide", Toast.LENGTH_SHORT).show();
             }
@@ -160,11 +176,15 @@ public class CourseFragment extends Fragment {
             String matricule = editTextStudentMatricule.getText().toString();
 
             if (!firstName.isEmpty() && !lastName.isEmpty() && !matricule.isEmpty()) {
-                // Crée un nouveau student avec les informations saisies
-                Student newStudent = new Student(matricule, firstName, lastName);
-                studentsMap.put(matricule, newStudent);  // Utilisation de la clé matricule pour ajouter à la Map
-                studentAdapter.notifyDataSetChanged();  // Met à jour l'adaptateur de RecyclerView
-                popupWindow.dismiss();
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    Student newStudent = new Student(matricule, firstName, lastName, selectedBloc.getId());
+                    db.studentDao().insert(newStudent);
+
+                    requireActivity().runOnUiThread(() -> {
+                        loadStudents();
+                        popupWindow.dismiss();
+                    });
+                });
             } else {
                 Toast.makeText(requireContext(), "Tous les champs doivent être remplis", Toast.LENGTH_SHORT).show();
             }
@@ -174,9 +194,10 @@ public class CourseFragment extends Fragment {
     }
 
     private void navigateToEvaluations(Course course) {
-        // Naviguer vers EvaluationFragment avec le cours sélectionné
         Bundle args = new Bundle();
         args.putSerializable("selectedParent", course);
+        args.putString("parentType", "Course");
+        args.putSerializable("parentId", course.getId());
         EvaluationFragment fragment = new EvaluationFragment();
         fragment.setArguments(args);
 

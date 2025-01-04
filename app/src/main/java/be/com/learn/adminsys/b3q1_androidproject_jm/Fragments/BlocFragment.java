@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Fragment;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import android.view.Gravity;
 import android.widget.PopupWindow;
@@ -21,9 +21,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controller.BlocAdapter;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DatabaseCollector;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.BlocAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DAOs.BlocDao;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
+
+
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class BlocFragment extends Fragment {
@@ -31,6 +34,8 @@ public class BlocFragment extends Fragment {
     private RecyclerView recyclerViewBlocs;
     private BlocAdapter blocAdapter;
     private List<Bloc> blocs = new ArrayList<>();
+    private AppDatabase db;
+    private BlocDao blocDao;
 
     @Nullable
     @Override
@@ -40,18 +45,26 @@ public class BlocFragment extends Fragment {
         recyclerViewBlocs = view.findViewById(R.id.recyclerViewBlocs);
         recyclerViewBlocs.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Initialisation du bouton
-        view.findViewById(R.id.addBlocButton).setOnClickListener(v -> showAddBlocDialog(v));
+        db = AppDatabase.getInstance(requireContext());
+        blocDao = db.blocDao();
+
+        view.findViewById(R.id.addBlocButton).setOnClickListener(this::showAddBlocDialog);
 
         loadBlocs();
         return view;
     }
 
     private void loadBlocs() {
-        // Charge les blocs depuis la base de données ou crée une liste vide
-        blocs = DatabaseCollector.getBlocs();
-        blocAdapter = new BlocAdapter(blocs, bloc -> navigateToCourses(bloc));
-        recyclerViewBlocs.setAdapter(blocAdapter);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            // Récupération des blocs depuis la base de données en arrière-plan
+            blocs = blocDao.getAllBlocs();
+
+            requireActivity().runOnUiThread(() -> {
+                // Mise à jour de l'adaptateur sur le thread principal
+                blocAdapter = new BlocAdapter(blocs, bloc -> navigateToCourses(bloc));
+                recyclerViewBlocs.setAdapter(blocAdapter);
+            });
+        });
     }
 
     private void showAddBlocDialog(View v) {
@@ -72,9 +85,7 @@ public class BlocFragment extends Fragment {
         confirmButton.setOnClickListener(view -> {
             String blocName = editTextBlocName.getText().toString();
             if (!blocName.isEmpty()) {
-                Bloc newBloc = new Bloc(blocName, new HashMap<>(), new ArrayList<>());
-                blocs.add(newBloc);
-                blocAdapter.notifyDataSetChanged();
+                addBloc(blocName);
                 popupWindow.dismiss();
             } else {
                 Toast.makeText(requireContext(), "Le nom du bloc ne peut pas être vide", Toast.LENGTH_SHORT).show();
@@ -84,8 +95,23 @@ public class BlocFragment extends Fragment {
         cancelButton.setOnClickListener(view -> popupWindow.dismiss());
     }
 
+    private void addBloc(String blocName) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            // Ajout du bloc en arrière-plan
+            Bloc addedBloc = new Bloc(blocName);
+            blocDao.insert(addedBloc);
+
+            // Conversion et ajout à la liste métier
+            blocs.add(addedBloc);
+
+            requireActivity().runOnUiThread(() -> {
+                // Mise à jour de l'adaptateur sur le thread principal
+                blocAdapter.notifyDataSetChanged();
+            });
+        });
+    }
+
     private void navigateToCourses(Bloc bloc) {
-        // Navigue vers le fragment CourseFragment
         Bundle args = new Bundle();
         args.putSerializable("selectedBloc", bloc);
         CourseFragment fragment = new CourseFragment();

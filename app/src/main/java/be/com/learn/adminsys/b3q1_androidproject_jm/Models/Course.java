@@ -1,38 +1,59 @@
 package be.com.learn.adminsys.b3q1_androidproject_jm.Models;
 
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.evaluation.NewEvaluation;
+@Entity(
+        tableName = "courses",
+        foreignKeys = @ForeignKey(
+                entity = Bloc.class,
+                parentColumns = "id",
+                childColumns = "blocId",
+                onDelete = ForeignKey.CASCADE
+        )
+)
+public class Course implements Serializable {
 
-public class Course implements Serializable, EvaluationParent {
-    private Map<String, Student> students;
-    private List<NewEvaluation> evaluations;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
     private String name;
 
-    public Course(String name, Map<String, Student> students, List<NewEvaluation> evaluations) {
+    private int blocId; // Reference to the parent BlocDB
+
+    // Constructor
+    public Course(String name, int blocId) {
         this.name = name;
-        this.students = students;
-        this.evaluations = evaluations;
+        this.blocId = blocId;
     }
-    // Getters et Setters
-    // Get the name of the course
+
+    public Course() {}
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
-    // get the list of students in the course
-    public Map<String, Student> getStudents() {
-        return students;
+
+    public void setName(String name) {
+        this.name = name;
     }
-    // get the list of evaluations in the course
-    @Override
-    public List<NewEvaluation> getEvaluations() {
-        return evaluations;
+
+    public int getBlocId() {
+        return blocId;
     }
-    // add evaluation to the course
-    @Override
-    public void addEvaluation(NewEvaluation evaluation) {
-        evaluations.add(evaluation);
+
+    public void setBlocId(int blocId) {
+        this.blocId = blocId;
     }
 }

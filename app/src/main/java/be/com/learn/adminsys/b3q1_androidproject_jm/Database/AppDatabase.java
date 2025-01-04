@@ -1,30 +1,46 @@
 package be.com.learn.adminsys.b3q1_androidproject_jm.Database;
 
-import androidx.annotation.NonNull;
+import android.content.Context;
+
 import androidx.room.Database;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
-@Database(entities = {}, version = 1)
-public class AppDatabase extends RoomDatabase {
-    @Override
-    public void clearAllTables() {
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DAOs.EvaluationDao;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Course;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Evaluation;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Student;
 
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DAOs.BlocDao;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DAOs.CourseDao;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DAOs.StudentDao;
+
+@Database(entities = {Bloc.class, Course.class, Student.class, Evaluation.class}, version = 1)
+public abstract class AppDatabase extends RoomDatabase {
+
+    public abstract BlocDao blocDao();
+
+    public abstract CourseDao courseDao();
+
+    public abstract StudentDao studentDao();
+
+    public abstract EvaluationDao evaluationDao();
+
+    // Singleton de la base de données
+    private static volatile AppDatabase INSTANCE;
+
+    public static AppDatabase getInstance(Context context) {
+        if (INSTANCE == null) {
+            synchronized (AppDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                    AppDatabase.class, "app_database")
+                            .fallbackToDestructiveMigration() // Gère les migrations automatiquement
+                            .build();
+                }
+            }
+        }
+        return INSTANCE;
     }
-
-    @NonNull
-    @Override
-    protected SupportSQLiteOpenHelper createOpenHelper(@NonNull DatabaseConfiguration databaseConfiguration) {
-        return null;
-    }
-
-    @NonNull
-    @Override
-    protected InvalidationTracker createInvalidationTracker() {
-        return null;
-    }
-
-
 }

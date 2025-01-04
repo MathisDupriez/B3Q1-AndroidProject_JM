@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Controller;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Controllers;
 
 import android.view.LayoutInflater;
 import android.view.View;
