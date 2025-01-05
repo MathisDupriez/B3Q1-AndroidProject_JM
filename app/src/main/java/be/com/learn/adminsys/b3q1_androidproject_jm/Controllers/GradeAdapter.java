@@ -84,7 +84,7 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
             }
 
             if (evaluation != null) {
-                textViewGradePoint.setText(grade.getPoint() + " / " + evaluation.getMaxPoints());
+                textViewGradePoint.setText(grade.getDisplayPoint() + " / " + evaluation.getMaxPoints());
             } else {
                 textViewGradePoint.setText(grade.getPoint() + " / Inconnu");
             }

@@ -72,6 +72,15 @@ public class Grade implements Serializable {
     }
 
     public void setPoint(double point) {
-        this.point = point;
+        this.point = Math.round(point * 100) / 100.0; // pour garder la précision au .01
     }
+
+    public static double roundToNearestHalf(double value) {
+        return Math.round(value * 2) / 2.0;
+    }
+
+    public double getDisplayPoint() {
+        return roundToNearestHalf(point);
+    }
+
 }

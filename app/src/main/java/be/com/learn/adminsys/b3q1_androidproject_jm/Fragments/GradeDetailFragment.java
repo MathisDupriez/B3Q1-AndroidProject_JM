@@ -1,6 +1,8 @@
 package be.com.learn.adminsys.b3q1_androidproject_jm.Fragments;
 
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +62,8 @@ public class GradeDetailFragment extends Fragment {
 
         loadGradeDetails();
 
+
+
         buttonSaveGrade.setOnClickListener(v -> saveGrade());
 
         buttonBack.setOnClickListener(v -> {
@@ -91,7 +95,7 @@ public class GradeDetailFragment extends Fragment {
                         textViewStudentMatricule.setText("Inconnu");
                     }
 
-                    editTextGradePoint.setText(String.valueOf(grade.getPoint()));
+                    editTextGradePoint.setText(String.valueOf(grade.getDisplayPoint()));
 
                     if (evaluation != null) {
                         textViewGradeTitle.setText("Note à : " + evaluation.getName());
@@ -105,6 +109,7 @@ public class GradeDetailFragment extends Fragment {
         });
     }
 
+
     private void saveGrade() {
         String gradePointStr = editTextGradePoint.getText().toString();
 
@@ -114,6 +119,8 @@ public class GradeDetailFragment extends Fragment {
         }
 
         double gradePoint = Double.parseDouble(gradePointStr);
+
+
 
         Executors.newSingleThreadExecutor().execute(() -> {
             Grade grade = db.gradeDao().getGradeById(gradeId);
@@ -127,6 +134,16 @@ public class GradeDetailFragment extends Fragment {
                     if (gradePoint < 0) {
                         requireActivity().runOnUiThread(() ->
                                 Toast.makeText(requireContext(), "La note ne peut pas être inférieure à 0", Toast.LENGTH_SHORT).show());
+                        return;
+                    }
+
+                    // Vérifier EXACTEMENT 2 décimales
+                    if (!gradePointStr.matches("\\d+\\.\\d{2}")) {
+                        requireActivity().runOnUiThread(() -> Toast.makeText(
+                                requireContext(),
+                                "Vous devez saisir exactement 2 décimales (ex: 12.30).",
+                                Toast.LENGTH_SHORT
+                        ).show());
                         return;
                     }
 
@@ -153,6 +170,8 @@ public class GradeDetailFragment extends Fragment {
                         Toast.makeText(requireContext(), "Grade introuvable", Toast.LENGTH_SHORT).show());
             }
         });
+
+
     }
 }
 
