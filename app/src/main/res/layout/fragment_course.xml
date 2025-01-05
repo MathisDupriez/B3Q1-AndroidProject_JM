@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <TextView
+        android:id="@+id/textCourseTitle"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="Cours"
+        android:gravity="center"
+        android:textColor="#007BFF"
+        android:textSize="25sp" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp"
+        android:layout_marginTop="16dp">
+
+        <!-- Affichage de la valeur 'Course' -->
+        <TextView
+            android:id="@+id/textCourse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Course"
+            android:textColor="#007BFF"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="8dp" />
+
+        <!-- Le Switch -->
+        <Switch
+            android:id="@+id/toggleButtonBlocStudent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:thumbTint="@android:color/white"
+            android:trackTint="#007BFF"
+            android:textOn="Student"
+            android:textOff="Course"
+            android:layout_gravity="center_vertical"
+            android:padding="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Affichage de la valeur 'Student' -->
+        <TextView
+            android:id="@+id/textStudent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student"
+            android:textColor="#007BFF"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:paddingEnd="8dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="#007BFF" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCourses"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <Button
+        android:id="@+id/addCourseButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#007BFF"
+        android:text="Ajouter un cours"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+</LinearLayout>

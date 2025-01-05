@@ -1,0 +1,44 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical">
+
+    <!-- Informations de l'étudiant -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewStudentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom Prénom"
+            android:textSize="16sp"
+            android:paddingBottom="2dp" />
+
+        <TextView
+            android:id="@+id/textViewStudentMatricule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Matricule"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray" />
+    </LinearLayout>
+
+    <!-- Note et MaxPoint alignés à droite -->
+    <TextView
+        android:id="@+id/textViewGradePoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10 / 20"
+        android:textSize="16sp"
+        android:paddingStart="8dp"
+        android:textStyle="bold"
+        android:gravity="end" />
+</LinearLayout>

@@ -1,0 +1,81 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Titre -->
+    <TextView
+        android:id="@+id/textEvaluationTitle"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="Évaluations"
+        android:gravity="center"
+        android:textColor="#007BFF"
+        android:textSize="25sp" />
+
+    <!-- Toggle pour afficher sous-évaluations / grades -->
+    <LinearLayout
+        android:id="@+id/toggleContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"> <!-- Masqué par défaut -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sous-évals"
+            android:textColor="#007BFF"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical" />
+
+        <Switch
+            android:id="@+id/toggleSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:thumbTint="@android:color/white"
+            android:trackTint="#007BFF"
+            android:textOn="Grades"
+            android:textOff="Sous-évals"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grades"
+            android:textColor="#007BFF"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+    <!-- Ligne séparatrice -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="#007BFF" />
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewEvaluations"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Bouton Ajouter -->
+    <Button
+        android:id="@+id/addEvaluationButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#007BFF"
+        android:text="Ajouter une évaluation"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+</LinearLayout>
