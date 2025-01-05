@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,18 +24,24 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.EvaluationAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.GradeAdapter;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Evaluation;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Grade;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Student;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class EvaluationFragment extends Fragment {
 
     private RecyclerView recyclerViewEvaluations;
     private EvaluationAdapter evaluationAdapter;
+    private GradeAdapter gradeAdapter;
     private AppDatabase db;
     private int parentId; // ID du parent (e.g., Course ou CompositeEvaluation)
     private String parentType; // Type du parent ("Course" ou "CompositeEvaluation")
-    String parentName;
+    private String parentName;
+    private Bloc selectedBloc;
 
     @Nullable
     @Override
@@ -44,30 +52,46 @@ public class EvaluationFragment extends Fragment {
 
         db = AppDatabase.getInstance(requireContext());
 
+        // Toggle et son conteneur
+        Switch toggleSwitch = view.findViewById(R.id.toggleSwitch);
+        LinearLayout toggleContainer = view.findViewById(R.id.toggleContainer);
+
         // Récupérer les arguments
         if (getArguments() != null) {
-
             parentId = getArguments().getInt("parentId");
             parentType = getArguments().getString("parentType");
+            selectedBloc = (Bloc) getArguments().getSerializable("selectedBloc");
         }
 
-        // Initialiser le bouton d'ajout
+        // Afficher ou masquer le toggle selon le type
+        if ("CompositeEvaluation".equals(parentType)) {
+            toggleContainer.setVisibility(View.VISIBLE);
+        } else {
+            toggleContainer.setVisibility(View.GONE);
+        }
+
+        // Gérer les changements de toggle
+        toggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                loadGrades();
+            } else {
+                loadEvaluations();
+            }
+        });
+
+        // Bouton Ajouter
         Button buttonAddEvaluation = view.findViewById(R.id.addEvaluationButton);
         buttonAddEvaluation.setOnClickListener(this::showAddEvaluationDialog);
 
-        // Mettre à jour le titre
-
-
-
         setParentName();
-        loadEvaluations();
+        loadEvaluations(); // Par défaut, charger les sous-évaluations
         return view;
     }
 
     private void setParentName() {
         Executors.newSingleThreadExecutor().execute(() -> {
             if ("Course".equals(parentType)) {
-                parentName = "Evaluation du cours :  " + db.courseDao().getCourseById(parentId).getName();
+                parentName = "Evaluation du cours : " + db.courseDao().getCourseById(parentId).getName();
             } else {
                 parentName = "Sous-évaluation de : " + db.evaluationDao().getEvaluationById(parentId).getName();
             }
@@ -87,12 +111,59 @@ public class EvaluationFragment extends Fragment {
                 evaluationAdapter = new EvaluationAdapter(evaluations, evaluation -> {
                     if ("Composite".equals(evaluation.getType())) {
                         navigateToSubEvaluations(evaluation);
+                    } else if ("Final".equals(evaluation.getType())) {
+                        navigateToGrades(evaluation);
                     }
                 });
                 recyclerViewEvaluations.setAdapter(evaluationAdapter);
             });
         });
     }
+
+    private void loadGrades() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            // Récupère les grades pour l'évaluation
+            List<Grade> grades = db.gradeDao().getGradesByEvaluationId(parentId);
+
+            // Récupère tous les étudiants du bloc
+            List<Student> blocStudents = db.studentDao().getStudentsByBlocId(selectedBloc.getId());
+            boolean isGradeAdded = false;
+
+            // Vérifie si chaque étudiant du bloc a un grade pour l'évaluation
+            for (Student student : blocStudents) {
+                boolean hasGrade = false;
+                for (Grade grade : grades) {
+                    if (grade.getStudentId() == student.getId()) {
+                        hasGrade = true;
+                        break;
+                    }
+                }
+                // Si l'étudiant n'a pas encore de grade, en crée un avec une note par défaut (e.g., 0)
+                if (!hasGrade) {
+                    Grade newGrade = new Grade(0, student.getId(), parentId);
+                    db.gradeDao().insert(newGrade); // Insère le nouveau grade dans la base
+                    grades.add(newGrade); // Ajoute le grade à la liste locale
+                    isGradeAdded = true;
+                }
+            }
+
+            // Si des grades ont été ajoutés, recharge les données
+            if (isGradeAdded) {
+                loadGrades();
+                return;
+            }
+
+            // Met à jour l'interface utilisateur dans le thread principal
+            requireActivity().runOnUiThread(() -> {
+                gradeAdapter = new GradeAdapter(grades, db, grade -> {
+                    // Action lors du clic sur un élément
+                    navigateToGradeDetail(grade);
+                });
+                recyclerViewEvaluations.setAdapter(gradeAdapter);
+            });
+        });
+    }
+
 
     private void showAddEvaluationDialog(View v) {
         LayoutInflater inflater = LayoutInflater.from(requireContext());
@@ -112,6 +183,7 @@ public class EvaluationFragment extends Fragment {
         Button confirmButton = popupView.findViewById(R.id.confirmEvaluationButton);
         Button cancelButton = popupView.findViewById(R.id.cancelEvaluationButton);
         editTextMaxPoints.setText("20");
+
         confirmButton.setOnClickListener(view -> {
             String evaluationName = editTextEvaluationName.getText().toString();
             String maxPointsStr = editTextMaxPoints.getText().toString();
@@ -125,7 +197,9 @@ public class EvaluationFragment extends Fragment {
                 Evaluation newEvaluation = new Evaluation(maxPoints, evaluationName, parentType, parentId, type);
 
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    db.evaluationDao().insert(newEvaluation);
+                    long evalID = db.evaluationDao().insert(newEvaluation);
+
+
 
                     requireActivity().runOnUiThread(() -> {
                         loadEvaluations();
@@ -143,7 +217,36 @@ public class EvaluationFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt("parentId", compositeEvaluation.getId());
         args.putString("parentType", "CompositeEvaluation");
+        args.putSerializable("selectedBloc", selectedBloc);
         EvaluationFragment fragment = new EvaluationFragment();
+        fragment.setArguments(args);
+
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void navigateToGrades(Evaluation finalEvaluation) {
+        // Naviguer vers le fragment GradeFragment pour afficher les notes
+        Bundle args = new Bundle();
+        args.putInt("evaluationId", finalEvaluation.getId());
+        args.putSerializable("selectedBloc", selectedBloc);
+        GradeFragment fragment = new GradeFragment();
+        fragment.setArguments(args);
+
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void navigateToGradeDetail(Grade grade) {
+        Bundle args = new Bundle();
+        args.putInt("gradeId", grade.getId());
+        GradeDetailFragment fragment = new GradeDetailFragment();
         fragment.setArguments(args);
 
         requireActivity().getSupportFragmentManager()

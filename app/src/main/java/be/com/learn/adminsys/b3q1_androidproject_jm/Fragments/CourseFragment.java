@@ -42,7 +42,7 @@ public class CourseFragment extends Fragment {
     private Switch toggleButton;
     private Map<String, Student> studentsMap;
     private Button addButton;
-
+    private int selectedBlocId;
     private AppDatabase db;
 
     @Nullable
@@ -62,16 +62,16 @@ public class CourseFragment extends Fragment {
         }
         if (selectedBloc != null) {
             textCourseTitle.setText("Cours de : " + selectedBloc.getName());
-            loadStudents();
+            loadCourses();
         } else {
             studentsMap = new HashMap<>();
         }
 
-        loadCourses();
 
         toggleButton = view.findViewById(R.id.toggleButtonBlocStudent);
         toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
+                loadStudents();
                 recyclerView.setAdapter(studentAdapter);
                 textCourseTitle.setText("Étudiants de : " + selectedBloc.getName());
                 addButton.setText("Ajouter un étudiant");
@@ -113,7 +113,10 @@ public class CourseFragment extends Fragment {
                 studentsMap.put(student.getMatricule(), student);
             }
 
-            requireActivity().runOnUiThread(() -> studentAdapter = new StudentAdapter(new ArrayList<>(studentsMap.values())));
+            requireActivity().runOnUiThread(() -> {
+                studentAdapter = new StudentAdapter(new ArrayList<>(studentsMap.values()));
+                recyclerView.setAdapter(studentAdapter);
+            });
         });
     }
 
@@ -179,7 +182,6 @@ public class CourseFragment extends Fragment {
                 Executors.newSingleThreadExecutor().execute(() -> {
                     Student newStudent = new Student(matricule, firstName, lastName, selectedBloc.getId());
                     db.studentDao().insert(newStudent);
-
                     requireActivity().runOnUiThread(() -> {
                         loadStudents();
                         popupWindow.dismiss();
@@ -198,6 +200,7 @@ public class CourseFragment extends Fragment {
         args.putSerializable("selectedParent", course);
         args.putString("parentType", "Course");
         args.putSerializable("parentId", course.getId());
+        args.putSerializable("selectedBloc", selectedBloc);
         EvaluationFragment fragment = new EvaluationFragment();
         fragment.setArguments(args);
 

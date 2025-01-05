@@ -12,7 +12,7 @@ import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Evaluation;
 public interface EvaluationDao {
 
     @Insert
-    void insert(Evaluation evaluation);
+    long insert(Evaluation evaluation);
 
     @Query("SELECT * FROM evaluations WHERE parent_id = :parentId AND parent_type = :parentType")
     List<Evaluation> getEvaluationsByParent(int parentId, String parentType);

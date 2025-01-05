@@ -102,8 +102,7 @@ public class BlocFragment extends Fragment {
             blocDao.insert(addedBloc);
 
             // Conversion et ajout à la liste métier
-            blocs.add(addedBloc);
-
+            loadBlocs();
             requireActivity().runOnUiThread(() -> {
                 // Mise à jour de l'adaptateur sur le thread principal
                 blocAdapter.notifyDataSetChanged();
