@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Fragments;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
 
 import android.view.Gravity;
 import android.widget.PopupWindow;
@@ -21,53 +19,46 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.BlocAdapter;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Database.DAOs.BlocDao;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.BlocController;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
-
-
+import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Manager.BlocManager;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter.BlocAdapter;
 
 public class BlocFragment extends Fragment {
 
     private RecyclerView recyclerViewBlocs;
     private BlocAdapter blocAdapter;
-    private List<Bloc> blocs = new ArrayList<>();
-    private AppDatabase db;
-    private BlocDao blocDao;
+    private BlocController blocController;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bloc, container, false);
 
+        // Initialiser les vues
         recyclerViewBlocs = view.findViewById(R.id.recyclerViewBlocs);
         recyclerViewBlocs.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        db = AppDatabase.getInstance(requireContext());
-        blocDao = db.blocDao();
+        // Initialisation du modèle et du contrôleur
+        AppDatabase db = AppDatabase.getInstance(requireContext());
+        BlocManager blocManager = new BlocManager(db);
+        blocAdapter = new BlocAdapter(new ArrayList<>(), bloc -> navigateToCourses(bloc));
+        recyclerViewBlocs.setAdapter(blocAdapter);
+        blocController = new BlocController(blocManager, requireActivity(), blocAdapter);
 
+        // Charger les blocs
+        blocController.loadBlocs();
+
+        // Configurer le bouton d'ajout
         view.findViewById(R.id.addBlocButton).setOnClickListener(this::showAddBlocDialog);
 
-        loadBlocs();
         return view;
     }
 
-    private void loadBlocs() {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            // Récupération des blocs depuis la base de données en arrière-plan
-            blocs = blocDao.getAllBlocs();
-
-            requireActivity().runOnUiThread(() -> {
-                // Mise à jour de l'adaptateur sur le thread principal
-                blocAdapter = new BlocAdapter(blocs, bloc -> navigateToCourses(bloc));
-                recyclerViewBlocs.setAdapter(blocAdapter);
-            });
-        });
-    }
-
     private void showAddBlocDialog(View v) {
+        // Affichage du popup pour ajouter un bloc
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         View popupView = inflater.inflate(R.layout.popup_add_bloc, null);
 
@@ -85,7 +76,7 @@ public class BlocFragment extends Fragment {
         confirmButton.setOnClickListener(view -> {
             String blocName = editTextBlocName.getText().toString();
             if (!blocName.isEmpty()) {
-                addBloc(blocName);
+                blocController.addBloc(blocName);
                 popupWindow.dismiss();
             } else {
                 Toast.makeText(requireContext(), "Le nom du bloc ne peut pas être vide", Toast.LENGTH_SHORT).show();
@@ -93,21 +84,6 @@ public class BlocFragment extends Fragment {
         });
 
         cancelButton.setOnClickListener(view -> popupWindow.dismiss());
-    }
-
-    private void addBloc(String blocName) {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            // Ajout du bloc en arrière-plan
-            Bloc addedBloc = new Bloc(blocName);
-            blocDao.insert(addedBloc);
-
-            // Conversion et ajout à la liste métier
-            loadBlocs();
-            requireActivity().runOnUiThread(() -> {
-                // Mise à jour de l'adaptateur sur le thread principal
-                blocAdapter.notifyDataSetChanged();
-            });
-        });
     }
 
     private void navigateToCourses(Bloc bloc) {

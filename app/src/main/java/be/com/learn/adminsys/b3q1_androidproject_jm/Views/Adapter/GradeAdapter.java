@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Controllers;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -23,14 +24,14 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
         void onItemClick(Grade grade);
     }
 
-    private final List<Grade> grades;
+    private List<Grade> grades;
     private final OnItemClickListener listener;
-    private final AppDatabase db; // Pour récupérer les données des étudiants et des évaluations
+    private final AppDatabase db;
 
-    public GradeAdapter(List<Grade> grades, AppDatabase db, OnItemClickListener listener) {
+    public GradeAdapter(List<Grade> grades, FragmentActivity activity, OnItemClickListener listener) {
         this.grades = grades;
         this.listener = listener;
-        this.db = db;
+        this.db = AppDatabase.getInstance(activity);
     }
 
     @NonNull
@@ -45,12 +46,10 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
     public void onBindViewHolder(@NonNull GradeViewHolder holder, int position) {
         Grade grade = grades.get(position);
 
-        // Charger les informations d'étudiant et d'évaluation
         Executors.newSingleThreadExecutor().execute(() -> {
             Student student = db.studentDao().getStudentById(grade.getStudentId());
             Evaluation evaluation = db.evaluationDao().getEvaluationById(grade.getEvaluationId());
 
-            // Mettre à jour l'affichage sur le thread principal
             holder.itemView.post(() -> holder.bind(grade, student, evaluation));
         });
 
@@ -60,6 +59,12 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
     @Override
     public int getItemCount() {
         return grades.size();
+    }
+
+    // Méthode pour mettre à jour la liste des grades
+    public void updateGrades(List<Grade> newGrades) {
+        this.grades = newGrades;
+        notifyDataSetChanged();
     }
 
     static class GradeViewHolder extends RecyclerView.ViewHolder {

@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Fragments;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Fragment;
 
 import android.os.Bundle;
 import android.view.Gravity;
@@ -20,58 +20,70 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.CourseAdapter;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.StudentAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.CourseController;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.StudentController;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Course;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Student;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Manager.CourseManager;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Manager.StudentManager;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter.CourseAdapter;
 
 public class CourseFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private CourseAdapter courseAdapter;
-    private StudentAdapter studentAdapter;
     private Bloc selectedBloc;
     private Switch toggleButton;
-    private Map<String, Student> studentsMap;
     private Button addButton;
-    private int selectedBlocId;
     private AppDatabase db;
+
+    private CourseController courseController;
+    private CourseManager courseManager;
+    private StudentController studentController;
+    private StudentManager studentManager;
+
+    private CourseAdapter courseAdapter;
+    private StudentAdapter studentAdapter;
+
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_course, container, false);
         recyclerView = view.findViewById(R.id.recyclerViewCourses);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        db = AppDatabase.getInstance(requireContext());
-
         addButton = view.findViewById(R.id.addCourseButton);
         TextView textCourseTitle = view.findViewById(R.id.textCourseTitle);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        courseAdapter = new CourseAdapter(new ArrayList<>(), course -> navigateToEvaluations(course));
+        studentAdapter = new StudentAdapter(new ArrayList<>());
+        recyclerView.setAdapter(courseAdapter);
+
+
+
+        db = AppDatabase.getInstance(requireContext());
+        courseManager = new CourseManager(db);
+        courseController = new CourseController(courseManager,requireActivity(), courseAdapter);
+
+        studentManager = new StudentManager(db);
+        studentController = new StudentController(studentManager, requireActivity(), studentAdapter);
 
         if (getArguments() != null) {
             selectedBloc = (Bloc) getArguments().getSerializable("selectedBloc");
         }
         if (selectedBloc != null) {
             textCourseTitle.setText("Cours de : " + selectedBloc.getName());
-            loadCourses();
-        } else {
-            studentsMap = new HashMap<>();
+            courseController.loadCourses(selectedBloc.getId());
         }
 
 
         toggleButton = view.findViewById(R.id.toggleButtonBlocStudent);
         toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                loadStudents();
+                studentController.loadStudents(selectedBloc.getId());
                 recyclerView.setAdapter(studentAdapter);
                 textCourseTitle.setText("Étudiants de : " + selectedBloc.getName());
                 addButton.setText("Ajouter un étudiant");
@@ -92,34 +104,6 @@ public class CourseFragment extends Fragment {
 
         return view;
     }
-
-    private void loadCourses() {
-        if (selectedBloc != null) {
-            Executors.newSingleThreadExecutor().execute(() -> {
-                List<Course> courses = db.courseDao().getCoursesByBlocId(selectedBloc.getId());
-                requireActivity().runOnUiThread(() -> {
-                    courseAdapter = new CourseAdapter(courses, course -> navigateToEvaluations(course));
-                    recyclerView.setAdapter(courseAdapter);
-                });
-            });
-        }
-    }
-
-    private void loadStudents() {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            List<Student> students = db.studentDao().getStudentsByBlocId(selectedBloc.getId());
-            studentsMap = new HashMap<>();
-            for (Student student : students) {
-                studentsMap.put(student.getMatricule(), student);
-            }
-
-            requireActivity().runOnUiThread(() -> {
-                studentAdapter = new StudentAdapter(new ArrayList<>(studentsMap.values()));
-                recyclerView.setAdapter(studentAdapter);
-            });
-        });
-    }
-
     private void showAddCourseDialog(View v) {
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         View popupView = inflater.inflate(R.layout.popup_add_course, null);
@@ -139,11 +123,8 @@ public class CourseFragment extends Fragment {
             String courseName = editTextCourseName.getText().toString();
             if (!courseName.isEmpty()) {
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    Course newCourse = new Course(courseName, selectedBloc.getId());
-                    db.courseDao().insert(newCourse);
-
+                    courseController.addCourse(courseName, selectedBloc.getId());
                     requireActivity().runOnUiThread(() -> {
-                        loadCourses();
                         popupWindow.dismiss();
                     });
                 });
@@ -180,10 +161,8 @@ public class CourseFragment extends Fragment {
 
             if (!firstName.isEmpty() && !lastName.isEmpty() && !matricule.isEmpty()) {
                 Executors.newSingleThreadExecutor().execute(() -> {
-                    Student newStudent = new Student(matricule, firstName, lastName, selectedBloc.getId());
-                    db.studentDao().insert(newStudent);
+                    studentController.addStudent(firstName, lastName, matricule, selectedBloc.getId());
                     requireActivity().runOnUiThread(() -> {
-                        loadStudents();
                         popupWindow.dismiss();
                     });
                 });

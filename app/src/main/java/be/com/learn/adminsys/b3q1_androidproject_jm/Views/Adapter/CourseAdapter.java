@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Controllers;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +19,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         void onItemClick(Course course);
     }
 
-    private final List<Course> courses;
+    private List<Course> courses;
     private final OnItemClickListener listener;
 
     public CourseAdapter(List<Course> courses, OnItemClickListener listener) {
@@ -45,6 +45,12 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     @Override
     public int getItemCount() {
         return courses.size();
+    }
+
+    // Méthode pour mettre à jour la liste des cours
+    public void updateCourses(List<Course> newCourses) {
+        this.courses = newCourses;
+        notifyDataSetChanged();
     }
 
     public static class CourseViewHolder extends RecyclerView.ViewHolder {
