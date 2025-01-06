@@ -31,6 +31,8 @@ public class Grade implements Serializable {
     private int studentId; // Référence à l'étudiant
     private int evaluationId; // Référence à l'évaluation
 
+    private boolean forced; // 0 = non, 1 = oui
+
     private double point;
 
     // Constructeurs
@@ -65,6 +67,14 @@ public class Grade implements Serializable {
 
     public void setEvaluationId(int evaluationId) {
         this.evaluationId = evaluationId;
+    }
+
+    public void setForced(boolean forced) {
+        this.forced = forced;
+    }
+
+    public boolean isForced() {
+        return forced;
     }
 
     public double getPoint() {

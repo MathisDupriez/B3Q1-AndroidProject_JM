@@ -17,6 +17,11 @@ public interface EvaluationDao {
     @Query("SELECT * FROM evaluations WHERE parent_id = :parentId AND parent_type = :parentType")
     List<Evaluation> getEvaluationsByParent(int parentId, String parentType);
 
+    // Cette méthode récupère les évaluations enfants d'une évaluation composite en utilisant uniquement parentId
+    @Query("SELECT * FROM evaluations WHERE parent_id = :parentId")
+    List<Evaluation> getEvaluationsByParentId(int parentId); // alias simplifié pour votre besoin
+
+
     @Query("SELECT * FROM evaluations WHERE type = :type")
     List<Evaluation> getEvaluationsByType(String type);
 

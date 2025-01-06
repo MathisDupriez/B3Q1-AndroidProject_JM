@@ -138,7 +138,7 @@ public class EvaluationFragment extends Fragment {
                         break;
                     }
                 }
-                // Si l'étudiant n'a pas encore de grade, en crée un avec une note par défaut (e.g., 0)
+                // Si l'étudiant n'a pas encore de grade, on crée un grade par défaut (e.g., 0)
                 if (!hasGrade) {
                     Grade newGrade = new Grade(0, student.getId(), parentId);
                     db.gradeDao().insert(newGrade); // Insère le nouveau grade dans la base
@@ -153,6 +153,24 @@ public class EvaluationFragment extends Fragment {
                 return;
             }
 
+            // Processus de calcul de la note composite
+            for (Grade grade : grades) {
+                // Récupérer l'évaluation associée à la note
+                Evaluation evaluation = db.evaluationDao().getEvaluationById(grade.getEvaluationId());
+
+                if ("Composite".equals(evaluation.getType())) {
+                    // Calculer la moyenne pondérée des évaluations enfants
+                    double weightedGrade = calculateCompositeGrade(evaluation, grade.getStudentId());
+
+                    // Convertir la note calculée sur 20 en une note sur maxPoints de l'évaluation composite
+                    double finalGrade = (weightedGrade / 20) * evaluation.getMaxPoints();
+
+                    // Mise à jour de la note de l'étudiant
+                    grade.setPoint(finalGrade);
+                    db.gradeDao().update(grade); // Mise à jour du grade dans la base
+                }
+            }
+
             // Met à jour l'interface utilisateur dans le thread principal
             requireActivity().runOnUiThread(() -> {
                 gradeAdapter = new GradeAdapter(grades, db, grade -> {
@@ -163,6 +181,57 @@ public class EvaluationFragment extends Fragment {
             });
         });
     }
+
+    /**
+     * Calcul la note d'une évaluation composite en fonction de ses évaluations enfants.
+     */
+    private double calculateCompositeGrade(Evaluation compositeEvaluation, int studentId) {
+        // Vérifier si l'évaluation composite est forcée
+        Grade compositeGrade = db.gradeDao().getGradeByStudentAndEvaluation(studentId, compositeEvaluation.getId());
+        if (compositeGrade != null && compositeGrade.isForced()) {
+            // Si l'évaluation composite est forcée, retourner la note de cette évaluation
+            return compositeGrade.getPoint(); // Prendre la note de l'évaluation forcée
+        }
+
+        // Sinon, procéder au calcul de la note composite normalement
+        List<Evaluation> childEvaluations = db.evaluationDao().getEvaluationsByParentId(compositeEvaluation.getId());
+        double totalPoints = 0;
+        double totalWeight = 0;
+
+        for (Evaluation childEvaluation : childEvaluations) {
+            if ("Final".equals(childEvaluation.getType())) {
+                // Si l'enfant est une évaluation finale, récupérer la note de l'étudiant
+                Grade grade = db.gradeDao().getGradeByStudentAndEvaluation(studentId, childEvaluation.getId());
+                if (grade != null) {
+                    // Pondérer la note en fonction du maxPoints de l'évaluation enfant
+                    double weight = childEvaluation.getMaxPoints();
+                    totalPoints += grade.getPoint();
+                    totalWeight += weight;
+                }
+            } else if ("Composite".equals(childEvaluation.getType())) {
+                // Si l'enfant est une évaluation composite, calculer la note récursivement
+                double childGrade = calculateCompositeGrade(childEvaluation, studentId);
+                double weight = childEvaluation.getMaxPoints();
+                totalPoints += childGrade;
+                totalWeight += weight;
+            }
+        }
+
+        // Ramener la note à la base de l'évaluation composite (en fonction de maxPoints)
+        if (totalWeight > 0) {
+            double compositeGradeFinal = totalPoints / totalWeight; // Note pondérée sur la somme des maxPoints des sous-évaluations
+
+            // Utiliser maxPoints de l'évaluation composite pour ajuster la note
+            return compositeGradeFinal * compositeEvaluation.getMaxPoints(); // On ramène la note sur la valeur de l'évaluation composite
+        } else {
+            return 0;  // Aucun poids, retourner 0
+        }
+    }
+
+
+
+
+
 
 
     private void showAddEvaluationDialog(View v) {

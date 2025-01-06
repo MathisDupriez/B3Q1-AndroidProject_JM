@@ -25,6 +25,9 @@ public interface GradeDao {
     @Query("SELECT * FROM grades WHERE id = :gradeId")
     Grade getGradeById(int gradeId);
 
+    @Query("SELECT * FROM grades WHERE studentId = :studentId AND evaluationId = :evaluationId")
+    Grade getGradeByStudentAndEvaluation(int studentId, int evaluationId);  // Récupère un grade par étudiant et évaluation
+
     @Delete
     void delete(Grade grade);
     @Update

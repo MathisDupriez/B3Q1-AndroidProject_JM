@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,8 +36,10 @@ public class GradeDetailFragment extends Fragment {
     private EditText editTextGradePoint; // Permet de modifier la note
     private TextView textViewMaxPoints;
     private Button buttonSaveGrade;
-
     private Button buttonBack;
+    private CheckBox checkBoxForceGrade;
+    private TextView checkBoxForceGradeText;
+
 
     @Nullable
     @Override
@@ -52,6 +55,10 @@ public class GradeDetailFragment extends Fragment {
         textViewMaxPoints = view.findViewById(R.id.textViewMaxPoints);
         buttonSaveGrade = view.findViewById(R.id.buttonSaveGrade);
         buttonBack = view.findViewById(R.id.buttonBack);
+        checkBoxForceGradeText = view.findViewById(R.id.checkBoxForceGradeText);
+
+        // Initialisation du CheckBox
+        checkBoxForceGrade = view.findViewById(R.id.checkBoxForceGrade);
 
         db = AppDatabase.getInstance(requireContext());
 
@@ -61,8 +68,6 @@ public class GradeDetailFragment extends Fragment {
         }
 
         loadGradeDetails();
-
-
 
         buttonSaveGrade.setOnClickListener(v -> saveGrade());
 
@@ -100,15 +105,28 @@ public class GradeDetailFragment extends Fragment {
                     if (evaluation != null) {
                         textViewGradeTitle.setText("Note à : " + evaluation.getName());
                         textViewMaxPoints.setText(String.valueOf(evaluation.getMaxPoints()));
+
+                        // Vérifier si l'évaluation parente est de type "Final"
+                        if ("Final".equals(evaluation.getType())) {
+                            // Cacher le CheckBox si c'est une évaluation finale
+                            checkBoxForceGrade.setVisibility(View.GONE);
+                            checkBoxForceGradeText.setVisibility(View.GONE);
+                        } else {
+                            // Afficher le CheckBox si ce n'est pas une évaluation finale
+                            checkBoxForceGrade.setVisibility(View.VISIBLE);
+                            checkBoxForceGradeText.setVisibility(View.VISIBLE);
+                        }
                     } else {
                         textViewGradeTitle.setText("Note de : Inconnu");
                         textViewMaxPoints.setText("Inconnu");
                     }
+
+                    // Initialiser l'état du CheckBox en fonction de la note forcée
+                    checkBoxForceGrade.setChecked(grade.isForced());
                 });
             }
         });
     }
-
 
     private void saveGrade() {
         String gradePointStr = editTextGradePoint.getText().toString();
@@ -119,8 +137,6 @@ public class GradeDetailFragment extends Fragment {
         }
 
         double gradePoint = Double.parseDouble(gradePointStr);
-
-
 
         Executors.newSingleThreadExecutor().execute(() -> {
             Grade grade = db.gradeDao().getGradeById(gradeId);
@@ -137,24 +153,16 @@ public class GradeDetailFragment extends Fragment {
                         return;
                     }
 
-                    // Vérifier EXACTEMENT 2 décimales
-                    if (!gradePointStr.matches("\\d+\\.\\d{2}")) {
-                        requireActivity().runOnUiThread(() -> Toast.makeText(
-                                requireContext(),
-                                "Vous devez saisir exactement 2 décimales (ex: 12.30).",
-                                Toast.LENGTH_SHORT
-                        ).show());
-                        return;
-                    }
-
                     if (gradePoint > maxPoints) {
                         requireActivity().runOnUiThread(() ->
                                 Toast.makeText(requireContext(), "La note ne peut pas dépasser " + maxPoints, Toast.LENGTH_SHORT).show());
                         return;
                     }
 
-                    // Mettre à jour la note si elle est valide
+                    // Mettre à jour la note et l'état de la note forcée
                     grade.setPoint(gradePoint);
+                    grade.setForced(checkBoxForceGrade.isChecked());
+
                     db.gradeDao().update(grade);
 
                     requireActivity().runOnUiThread(() -> {
@@ -170,8 +178,6 @@ public class GradeDetailFragment extends Fragment {
                         Toast.makeText(requireContext(), "Grade introuvable", Toast.LENGTH_SHORT).show());
             }
         });
-
-
     }
 }
 
