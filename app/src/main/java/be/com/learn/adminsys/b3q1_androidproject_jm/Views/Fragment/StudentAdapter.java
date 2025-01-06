@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Controllers;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +15,7 @@ import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentViewHolder> {
 
-    private final List<Student> students;
+    private List<Student> students;
 
     public StudentAdapter(List<Student> students) {
         this.students = students;
@@ -32,12 +32,18 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
     @Override
     public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
         Student student = students.get(position);
-        holder.textViewStudentName.setText(student.getMatricule()+ " : " + student.getFirstName() + " " + student.getLastName());
+        holder.textViewStudentName.setText(student.getMatricule() + " : " + student.getFirstName() + " " + student.getLastName());
     }
 
     @Override
     public int getItemCount() {
         return students.size();
+    }
+
+    // Méthode pour mettre à jour la liste des étudiants
+    public void updateStudents(List<Student> newStudents) {
+        this.students = newStudents;
+        notifyDataSetChanged();
     }
 
     public static class StudentViewHolder extends RecyclerView.ViewHolder {

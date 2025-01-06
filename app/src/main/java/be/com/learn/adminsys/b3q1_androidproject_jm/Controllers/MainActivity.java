@@ -4,7 +4,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Fragments.BlocFragment;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Views.Fragment.BlocFragment;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
 
 public class MainActivity extends AppCompatActivity {

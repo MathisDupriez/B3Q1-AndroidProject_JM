@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Controllers;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +19,7 @@ public class BlocAdapter extends RecyclerView.Adapter<BlocAdapter.BlocViewHolder
         void onItemClick(Bloc bloc);
     }
 
-    private final List<Bloc> blocs;
+    private List<Bloc> blocs;
     private final OnItemClickListener listener;
 
     public BlocAdapter(List<Bloc> blocs, OnItemClickListener listener) {
@@ -45,6 +45,12 @@ public class BlocAdapter extends RecyclerView.Adapter<BlocAdapter.BlocViewHolder
     @Override
     public int getItemCount() {
         return blocs.size();
+    }
+
+    // Méthode pour mettre à jour la liste des blocs
+    public void updateBlocs(List<Bloc> newBlocs) {
+        this.blocs = newBlocs;
+        notifyDataSetChanged();
     }
 
     public static class BlocViewHolder extends RecyclerView.ViewHolder {

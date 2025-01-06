@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Fragments;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Fragment;
 
 import android.os.Bundle;
 import android.view.Gravity;
@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,23 +20,41 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.concurrent.Executors;
 
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.EvaluationAdapter;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.GradeAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.EvaluationController;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Controllers.GradeController;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Database.AppDatabase;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Views.Fragment.GradeDetailFragment;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Bloc;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Evaluation;
 import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Grade;
-import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Student;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Manager.EvaluationManager;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Manager.GradeManager;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Models.Manager.StudentManager;
 import be.com.learn.adminsys.b3q1_androidproject_jm.R;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter.EvaluationAdapter;
+import be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter.GradeAdapter;
 
 public class EvaluationFragment extends Fragment {
 
     private RecyclerView recyclerViewEvaluations;
+    private Switch toggleSwitch;
+    private LinearLayout toggleContainer;
+    private Button buttonAddEvaluation;
+
+    // Adapter / controller
     private EvaluationAdapter evaluationAdapter;
     private GradeAdapter gradeAdapter;
-    private AppDatabase db;
+    private EvaluationController evaluationController;
+    private GradeController gradeController;
+
+    // manager
+    private EvaluationManager evaluationManager;
+    private GradeManager gradeManager;
+    private StudentManager studentManager;
+
+
+
     private int parentId; // ID du parent (e.g., Course ou CompositeEvaluation)
     private String parentType; // Type du parent ("Course" ou "CompositeEvaluation")
     private String parentName;
@@ -48,13 +65,25 @@ public class EvaluationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_evaluation, container, false);
         recyclerViewEvaluations = view.findViewById(R.id.recyclerViewEvaluations);
-        recyclerViewEvaluations.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        db = AppDatabase.getInstance(requireContext());
-
-        // Toggle et son conteneur
-        Switch toggleSwitch = view.findViewById(R.id.toggleSwitch);
+        toggleSwitch = view.findViewById(R.id.toggleSwitch);
         LinearLayout toggleContainer = view.findViewById(R.id.toggleContainer);
+        buttonAddEvaluation = view.findViewById(R.id.addEvaluationButton);
+
+        recyclerViewEvaluations.setLayoutManager(new LinearLayoutManager(requireContext()));
+        evaluationAdapter = new EvaluationAdapter(List.of(), evaluation -> {
+            if ("Composite".equals(evaluation.getType())) {
+                navigateToSubEvaluations(evaluation);
+            } else if ("Final".equals(evaluation.getType())) {
+                navigateToGrades(evaluation);
+            }
+        });
+        recyclerViewEvaluations.setAdapter(evaluationAdapter);
+        gradeAdapter = new GradeAdapter(List.of(), requireActivity(),grade -> navigateToGradeDetail(grade));
+
+        evaluationManager = new EvaluationManager(AppDatabase.getInstance(requireContext()));
+        gradeManager = new GradeManager(AppDatabase.getInstance(requireContext()));
+        studentManager = new StudentManager(AppDatabase.getInstance(requireContext()));
+
 
         // Récupérer les arguments
         if (getArguments() != null) {
@@ -63,6 +92,8 @@ public class EvaluationFragment extends Fragment {
             selectedBloc = (Bloc) getArguments().getSerializable("selectedBloc");
         }
 
+        evaluationController = new EvaluationController(evaluationManager, requireActivity(), evaluationAdapter, parentId, parentType);
+        gradeController = new GradeController(gradeManager, evaluationManager, studentManager, requireActivity(), gradeAdapter,parentId , selectedBloc,parentId);
         // Afficher ou masquer le toggle selon le type
         if ("CompositeEvaluation".equals(parentType)) {
             toggleContainer.setVisibility(View.VISIBLE);
@@ -73,96 +104,25 @@ public class EvaluationFragment extends Fragment {
         // Gérer les changements de toggle
         toggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                loadGrades();
+                gradeController.loadCompositeGrades();
+                recyclerViewEvaluations.setAdapter(gradeAdapter);
+                buttonAddEvaluation.setVisibility(View.GONE);
             } else {
-                loadEvaluations();
+                evaluationController.loadEvaluations();
+                recyclerViewEvaluations.setAdapter(evaluationAdapter);
+                buttonAddEvaluation.setVisibility(View.VISIBLE);
             }
         });
 
         // Bouton Ajouter
-        Button buttonAddEvaluation = view.findViewById(R.id.addEvaluationButton);
         buttonAddEvaluation.setOnClickListener(this::showAddEvaluationDialog);
 
-        setParentName();
-        loadEvaluations(); // Par défaut, charger les sous-évaluations
+        evaluationController.setParentName(view);
+        evaluationController.loadEvaluations(); // Par défaut, charger les sous-évaluations
         return view;
     }
 
-    private void setParentName() {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            if ("Course".equals(parentType)) {
-                parentName = "Evaluation du cours : " + db.courseDao().getCourseById(parentId).getName();
-            } else {
-                parentName = "Sous-évaluation de : " + db.evaluationDao().getEvaluationById(parentId).getName();
-            }
 
-            requireActivity().runOnUiThread(() -> {
-                TextView textEvaluationTitle = requireView().findViewById(R.id.textEvaluationTitle);
-                textEvaluationTitle.setText(parentName);
-            });
-        });
-    }
-
-    private void loadEvaluations() {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            List<Evaluation> evaluations = db.evaluationDao().getEvaluationsByParent(parentId, parentType);
-
-            requireActivity().runOnUiThread(() -> {
-                evaluationAdapter = new EvaluationAdapter(evaluations, evaluation -> {
-                    if ("Composite".equals(evaluation.getType())) {
-                        navigateToSubEvaluations(evaluation);
-                    } else if ("Final".equals(evaluation.getType())) {
-                        navigateToGrades(evaluation);
-                    }
-                });
-                recyclerViewEvaluations.setAdapter(evaluationAdapter);
-            });
-        });
-    }
-
-    private void loadGrades() {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            // Récupère les grades pour l'évaluation
-            List<Grade> grades = db.gradeDao().getGradesByEvaluationId(parentId);
-
-            // Récupère tous les étudiants du bloc
-            List<Student> blocStudents = db.studentDao().getStudentsByBlocId(selectedBloc.getId());
-            boolean isGradeAdded = false;
-
-            // Vérifie si chaque étudiant du bloc a un grade pour l'évaluation
-            for (Student student : blocStudents) {
-                boolean hasGrade = false;
-                for (Grade grade : grades) {
-                    if (grade.getStudentId() == student.getId()) {
-                        hasGrade = true;
-                        break;
-                    }
-                }
-                // Si l'étudiant n'a pas encore de grade, en crée un avec une note par défaut (e.g., 0)
-                if (!hasGrade) {
-                    Grade newGrade = new Grade(0, student.getId(), parentId);
-                    db.gradeDao().insert(newGrade); // Insère le nouveau grade dans la base
-                    grades.add(newGrade); // Ajoute le grade à la liste locale
-                    isGradeAdded = true;
-                }
-            }
-
-            // Si des grades ont été ajoutés, recharge les données
-            if (isGradeAdded) {
-                loadGrades();
-                return;
-            }
-
-            // Met à jour l'interface utilisateur dans le thread principal
-            requireActivity().runOnUiThread(() -> {
-                gradeAdapter = new GradeAdapter(grades, db, grade -> {
-                    // Action lors du clic sur un élément
-                    navigateToGradeDetail(grade);
-                });
-                recyclerViewEvaluations.setAdapter(gradeAdapter);
-            });
-        });
-    }
 
 
     private void showAddEvaluationDialog(View v) {
@@ -194,18 +154,7 @@ public class EvaluationFragment extends Fragment {
                 int maxPoints = Integer.parseInt(maxPointsStr);
                 String type = checkBoxIsFinal.isChecked() ? "Final" : "Composite";
 
-                Evaluation newEvaluation = new Evaluation(maxPoints, evaluationName, parentType, parentId, type);
-
-                Executors.newSingleThreadExecutor().execute(() -> {
-                    long evalID = db.evaluationDao().insert(newEvaluation);
-
-
-
-                    requireActivity().runOnUiThread(() -> {
-                        loadEvaluations();
-                        popupWindow.dismiss();
-                    });
-                });
+                evaluationController.addEvaluation(maxPoints, evaluationName, type);
             }
         });
 

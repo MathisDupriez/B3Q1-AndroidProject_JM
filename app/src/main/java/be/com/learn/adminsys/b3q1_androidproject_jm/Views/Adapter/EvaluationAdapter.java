@@ -1,4 +1,4 @@
-package be.com.learn.adminsys.b3q1_androidproject_jm.Controllers;
+package be.com.learn.adminsys.b3q1_androidproject_jm.Views.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +19,7 @@ public class EvaluationAdapter extends RecyclerView.Adapter<EvaluationAdapter.Ev
         void onItemClick(Evaluation evaluation);
     }
 
-    private final List<Evaluation> evaluations;
+    private List<Evaluation> evaluations;
     private final OnItemClickListener listener;
 
     public EvaluationAdapter(List<Evaluation> evaluations, OnItemClickListener listener) {
@@ -47,15 +47,19 @@ public class EvaluationAdapter extends RecyclerView.Adapter<EvaluationAdapter.Ev
         return evaluations.size();
     }
 
+    // Méthode pour mettre à jour la liste des évaluations
+    public void updateEvaluations(List<Evaluation> newEvaluations) {
+        this.evaluations = newEvaluations;
+        notifyDataSetChanged();
+    }
+
     static class EvaluationViewHolder extends RecyclerView.ViewHolder {
         TextView textViewName;
-        TextView textViewType;
         TextView textViewMaxPoints;
 
         EvaluationViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.textViewEvaluationName);
-
             textViewMaxPoints = itemView.findViewById(R.id.textViewEvaluationMaxPoints);
         }
 
